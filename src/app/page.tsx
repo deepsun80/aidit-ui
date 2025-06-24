@@ -1,103 +1,115 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import Sidebar from '@/components/SideBar';
+import Dashboard from '@/pages/Dashboard';
+import SupplierAudit from '@/pages/SupplierAudit';
+import AuditManagement from '@/pages/AuditManagement';
+import { useSession, signIn } from 'next-auth/react';
+import Image from 'next/image';
+import GlobalError from '@/components/GlobalError';
+import type { QAReport } from '@/types/qa';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { data: session, status } = useSession();
+  const [activePage, setActivePage] = useState<
+    'dashboard' | 'audit' | 'supplier'
+  >('audit');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  // === Report state ===
+  const [report, setReport] = useState<QAReport | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('qa-report');
+    if (stored) setReport(JSON.parse(stored));
+  }, []);
+
+  // Save to localStorage on change
+  useEffect(() => {
+    if (report) {
+      localStorage.setItem('qa-report', JSON.stringify(report));
+    } else {
+      localStorage.removeItem('qa-report');
+    }
+  }, [report]);
+
+  const updateReport = (partial: Partial<QAReport>) => {
+    setReport((prev) => (prev ? { ...prev, ...partial } : null));
+  };
+
+  const deleteQuestions = () => {
+    setReport((prev) =>
+      prev
+        ? {
+            ...prev,
+            questions: null,
+            selectedQuestions: [],
+            selectedFile: null,
+          }
+        : null
+    );
+  };
+
+  // === Global Error State ===
+  const [error, setError] = useState<string | null>(null);
+
+  const showError = (message: string) => {
+    setError(message);
+    setTimeout(() => setError(null), 5000); // auto-dismiss
+  };
+
+  const clearError = () => setError(null);
+
+  // === Auth ===
+  if (status === 'loading') {
+    return <p className='text-center text-lg font-medium'>Loading...</p>;
+  }
+
+  if (!session) {
+    return (
+      <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
+        <p className='text-md mb-4 text-gray-900'>
+          You must be signed in to access this page.
+        </p>
+        <button
+          onClick={() => signIn('google')}
+          className='flex items-center px-6 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+        >
+          <Image
+            src='/google-logo.png'
+            alt='Google Logo'
+            width={20}
+            height={20}
+            className='mr-2'
+          />
+          Sign in with Google
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className='min-h-screen bg-gray-100 flex flex-row'>
+      <Sidebar setActivePage={setActivePage} activePage={activePage} />
+      <div className='flex flex-col flex-1'>
+        <Header />
+        <main className='flex-1 p-8'>
+          {activePage === 'dashboard' && <Dashboard />}
+          {activePage === 'audit' && (
+            <AuditManagement
+              report={report}
+              setReport={setReport}
+              updateReport={updateReport}
+              deleteQuestions={deleteQuestions}
+              showError={showError}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          )}
+          {activePage === 'supplier' && <SupplierAudit />}
+        </main>
+        {error && <GlobalError error={error} clearError={clearError} />}
+      </div>
     </div>
   );
 }
