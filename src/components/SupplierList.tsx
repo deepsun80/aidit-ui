@@ -75,7 +75,7 @@ export default function SupplierList({
       </div>
 
       {/* Table wrapper */}
-      <div className='bg-white rounded-sm shadow-sm border border-gray-200 p-6'>
+      <div className='bg-white rounded-sm shadow-md border border-gray-200 p-6'>
         <div className='overflow-x-auto'>
           <table className='min-w-full text-sm text-left text-gray-800'>
             <thead className='border-b border-gray-300'>
@@ -110,8 +110,8 @@ export default function SupplierList({
                             supplier.risk === 'low'
                               ? '30%'
                               : supplier.risk === 'medium'
-                              ? '60%'
-                              : '90%',
+                                ? '60%'
+                                : '90%',
                           backgroundColor: getBarColor(supplier.risk),
                         }}
                       />

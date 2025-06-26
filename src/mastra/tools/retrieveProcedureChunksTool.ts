@@ -64,8 +64,6 @@ export const retrieveProcedureChunksTool = createTool<
       includeMetadata: true,
     });
 
-    console.log('results', results);
-
     const rawChunks =
       results.matches?.map((match: any, idx: any) => ({
         id: match.id ?? `match-${idx}`,

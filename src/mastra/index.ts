@@ -1,10 +1,10 @@
 import { Mastra } from '@mastra/core';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
-import { QueryRouterAgent } from './agents/QueryRouterAgent';
+import { CustomerAuditAgent } from './agents/CustomerAuditAgent';
 
 export const mastra = new Mastra({
-  agents: { QueryRouterAgent },
+  agents: { CustomerAuditAgent },
   storage: new LibSQLStore({
     url: ':memory:', // Change to 'file:../mastra.db' if persistence is needed
   }),

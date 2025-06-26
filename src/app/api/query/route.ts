@@ -8,11 +8,15 @@ export async function POST(req: NextRequest) {
     const { query, organization } = await req.json();
     const org = organization || 'paramount';
 
-    const agent = mastra.getAgent('QueryRouterAgent');
+    console.log('Received query:', query);
+
+    const agent = mastra.getAgent('CustomerAuditAgent');
 
     const result = await agent.generate([{ role: 'user', content: query }], {
       context: [{ role: 'system', content: `The organization is "${org}".` }],
     });
+
+    console.log('Agent response:', result);
 
     return NextResponse.json({
       question: query,

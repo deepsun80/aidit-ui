@@ -62,8 +62,8 @@ export default function NonconformityReport({
     notFoundPercentage <= 25
       ? '#22c55e'
       : notFoundPercentage <= 50
-      ? '#F97316'
-      : '#DC2626';
+        ? '#F97316'
+        : '#DC2626';
 
   const handleClickScrollTo = (qaNumber: number) => {
     onBack();
@@ -109,7 +109,7 @@ export default function NonconformityReport({
       </p>
 
       {/* Breakdown List */}
-      <div className='bg-white border border-gray-300 rounded-sm p-6'>
+      <div className='bg-white border border-gray-300 rounded-md shadow-md p-6'>
         {Object.keys(referenceMap).length === 0 ? (
           <p className='text-gray-600'>
             No Standard Reference Nonconformities Found.

@@ -48,7 +48,6 @@ export default function QACards({
   onViewUploaded,
   hasUploadedQuestions,
 }: QACardsProps) {
-  console.log('qaList', qaList);
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
@@ -62,20 +61,13 @@ export default function QACards({
     totalCount > 0 ? (notFoundCount / totalCount) * 100 : 0;
   const countColor =
     notFoundPercentage <= 25
-      ? '#48bb78' // Tailwind green-500
+      ? '#48bb78'
       : notFoundPercentage <= 50
-      ? '#F97316' // Tailwind orange-500
-      : '#DC2626'; // Tailwind red-500
+        ? '#F97316'
+        : '#DC2626';
 
   const filteredList = showOnlyNotFound
-    ? qaList.filter((qa) =>
-        qa.answer
-          .trim()
-          .split('\n')
-          .slice(-1)[0]
-          .toLowerCase()
-          .includes('found in context: false')
-      )
+    ? qaList.filter((qa) => qa.answer.trim().toLowerCase().startsWith('no'))
     : qaList;
 
   const toggleAccordion = (index: number) => {
@@ -191,22 +183,21 @@ export default function QACards({
 
       {/* Cards */}
       {filteredList.map((qa: any, index: number) => {
-        const isNotFound = qa.answer
-          .trim()
-          .split('\n')
-          .pop()
-          ?.includes('Found in Context: false');
+        const isNotFound = qa.answer.trim().toLowerCase().startsWith('no');
         const answerLines = qa.answer.trim().split('\n');
-        const displayAnswer = answerLines.slice(0, -1).join('\n');
+        const citationLine = answerLines.find((line: string) =>
+          line.toLowerCase().startsWith('citation:')
+        );
+        const displayAnswer = answerLines
+          .filter((line: string) => !line.toLowerCase().startsWith('citation:'))
+          .join('\n');
         const [questionText, referenceText] = qa.question.split(' - ');
 
         return (
           <div
             key={index}
             id={`qa-${index + 1}`}
-            className={`p-6 bg-white rounded-sm border ${
-              isNotFound ? 'border-red-500' : 'border-gray-300'
-            } relative`}
+            className={`p-6 bg-white shadow-md rounded-md border ${isNotFound ? 'border-red-500' : 'border-gray-300'} relative`}
           >
             <div className='flex justify-between items-center mb-2'>
               <div className='flex flex-col'>
@@ -216,16 +207,12 @@ export default function QACards({
                 {referenceText && (
                   <div className='flex items-center mt-1 gap-2'>
                     <p
-                      className={`text-sm italic ${
-                        isNotFound ? 'text-red-600' : 'text-gray-500'
-                      }`}
+                      className={`text-sm italic ${isNotFound ? 'text-red-600' : 'text-gray-500'}`}
                     >
                       Standard Reference: {referenceText}
                     </p>
                     <span
-                      className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        isNotFound ? 'bg-red-500' : 'bg-green-500'
-                      }`}
+                      className={`w-4 h-4 rounded-full flex items-center justify-center ${isNotFound ? 'bg-red-500' : 'bg-green-500'}`}
                     >
                       {isNotFound ? (
                         <Cross2Icon className='w-4 h-4 text-white' />
@@ -327,9 +314,16 @@ export default function QACards({
                     </div>
                   </>
                 ) : (
-                  <pre className='whitespace-pre-wrap break-words text-sm text-gray-700'>
-                    {displayAnswer}
-                  </pre>
+                  <div>
+                    <pre className='whitespace-pre-wrap break-words text-sm text-gray-700'>
+                      {displayAnswer}
+                    </pre>
+                    {citationLine && (
+                      <p className='mt-2 text-sm text-gray-500 italic'>
+                        {citationLine}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             )}

@@ -47,12 +47,7 @@ export default function AuditManagement({
   const selectedFile = report?.selectedFile || null;
 
   const notFoundCount = qaList.filter((qa) =>
-    qa.answer
-      .trim()
-      .split('\n')
-      .at(-1)
-      ?.toLowerCase()
-      .includes('found in context: false')
+    qa.answer.trim().toLowerCase().startsWith('no')
   ).length;
 
   const handleSubmitChat = async (e: React.FormEvent) => {
@@ -83,43 +78,41 @@ export default function AuditManagement({
     setSubmissionProgress(0);
     cancelRequestedRef.current = false;
 
-    const currentQaList = [...qaList];
+    let currentQaList = [...qaList];
 
-    console.log('currentQaList', currentQaList);
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      if (cancelRequestedRef.current) {
+        console.log('Cancellation triggered.');
+        break;
+      }
 
-    // for (let i = 0; i < selectedQuestions.length; i++) {
-    //   if (cancelRequestedRef.current) {
-    //     console.log('Cancellation triggered.');
-    //     break;
-    //   }
+      const question = selectedQuestions[i];
+      const exists = currentQaList.some(
+        (qa) => qa.question.trim() === question.trim()
+      );
 
-    //   const question = selectedQuestions[i];
-    //   const exists = currentQaList.some(
-    //     (qa) => qa.question.trim() === question.trim()
-    //   );
+      if (exists) {
+        console.log(`Skipping duplicate question: ${question}`);
+        continue;
+      }
 
-    //   if (exists) {
-    //     console.log(`Skipping duplicate question: ${question}`);
-    //     continue;
-    //   }
+      const res = await fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: question }),
+      });
 
-    //   const res = await fetch('/api/query', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ query: question }),
-    //   });
+      const data = await res.json();
 
-    //   const data = await res.json();
+      if (data.answer) {
+        const newQa = { question: data.question, answer: data.answer };
+        currentQaList = [...currentQaList, newQa];
+        updateReport({ qaList: currentQaList });
+      }
 
-    //   if (data.answer) {
-    //     const newQa = { question: data.question, answer: data.answer };
-    //     currentQaList = [...currentQaList, newQa];
-    //     updateReport({ qaList: currentQaList });
-    //   }
-
-    //   setSubmissionProgress(i + 1);
-    //   await new Promise((resolve) => setTimeout(resolve, 1000));
-    // }
+      setSubmissionProgress(i + 1);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
 
     setSubmissionProgress(null);
     setLoading(false);
@@ -129,28 +122,27 @@ export default function AuditManagement({
   };
 
   const processQuery = async (query: string) => {
-    console.log('query', JSON.stringify({ query }));
-    // try {
-    //   const res = await fetch('/api/query', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ query }),
-    //   });
+    try {
+      const res = await fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
 
-    //   const data = await res.json();
+      const data = await res.json();
 
-    //   if (data.answer && report) {
-    //     updateReport({
-    //       qaList: [
-    //         ...(report.qaList || []),
-    //         { question: data.question, answer: data.answer },
-    //       ],
-    //     });
-    //   }
-    // } catch (error) {
-    //   showError(`Error with query: ${error}`);
-    //   console.error('Error with query:', error);
-    // }
+      if (data.answer && report) {
+        updateReport({
+          qaList: [
+            ...(report.qaList || []),
+            { question: data.question, answer: data.answer },
+          ],
+        });
+      }
+    } catch (error) {
+      showError(`Error with query: ${error}`);
+      console.error('Error with query:', error);
+    }
   };
 
   const handleEditAnswer = (index: number, newAnswer: string) => {
@@ -219,10 +211,10 @@ export default function AuditManagement({
             {showCancel
               ? 'Cancelling...'
               : uploading
-              ? `Processing ${selectedFile?.name ?? 'file'}...`
-              : submissionProgress !== null
-              ? `Processing ${submissionProgress} / ${selectedQuestions.length}...`
-              : 'Processing...'}
+                ? `Processing ${selectedFile?.name ?? 'file'}...`
+                : submissionProgress !== null
+                  ? `Processing ${submissionProgress} / ${selectedQuestions.length}...`
+                  : 'Processing...'}
           </span>
           {loading && (
             <button

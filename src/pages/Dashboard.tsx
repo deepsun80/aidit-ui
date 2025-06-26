@@ -205,7 +205,7 @@ export default function Dashboard() {
       </div>
 
       {/* Wrapper */}
-      <div className='bg-white rounded-sm shadow-sm border border-gray-300 p-6'>
+      <div className='bg-white rounded-sm shadow-md border border-gray-300 p-6'>
         <div className='flex gap-6 border-b border-gray-200 mb-6'>
           {Object.entries(tabLabels).map(([key, label]) => (
             <button
@@ -248,8 +248,8 @@ export default function Dashboard() {
                     percentage <= 25
                       ? '#22c55e'
                       : percentage <= 50
-                      ? '#F97316'
-                      : '#DC2626';
+                        ? '#F97316'
+                        : '#DC2626';
 
                   return (
                     <tr key={idx} className='border-b border-gray-100'>
@@ -261,8 +261,8 @@ export default function Dashboard() {
                             activeTab === 'scheduled' && idx === 0
                               ? 'text-red-600 font-medium'
                               : activeTab === 'scheduled' && idx === 1
-                              ? 'text-orange-500 font-medium'
-                              : 'text-blue-600'
+                                ? 'text-orange-500 font-medium'
+                                : 'text-blue-600'
                           }`}
                         >
                           {item.id}

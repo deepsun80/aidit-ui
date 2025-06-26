@@ -48,6 +48,14 @@ export const queryRegulationTool = createTool<
   execute: async ({ context }) => {
     const { query, standard, type } = context;
 
+    console.log('queryRegulationTool called with:', { query, standard, type });
+
+    if (!standard || !query) {
+      throw new Error(
+        'Missing required inputs: standard and query must be non-empty'
+      );
+    }
+
     const { embedding } = await embed({
       value: query,
       model: openai.embedding('text-embedding-3-small'),

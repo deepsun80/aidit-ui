@@ -6,8 +6,8 @@ import { retrieveProcedureChunksTool } from '@/mastra/tools/retrieveProcedureChu
 import { findFormReferenceTool } from '@/mastra/tools/findFormReferenceTool';
 import { queryRegulationTool } from '@/mastra/tools/queryRegulationTool';
 
-export const QueryRouterAgent = new Agent({
-  name: 'QueryRouterAgent',
+export const CustomerAuditAgent = new Agent({
+  name: 'CustomerAuditAgent',
   description:
     'Routes audit-related questions to the appropriate document namespaces and formats the response.',
   model: openai('gpt-4o'),
@@ -125,7 +125,7 @@ export const QueryRouterAgent = new Agent({
       - Avoid adding extra background or padding — be direct.
 
       - If a source citation is available, include it on a new line using the format:
-          Citation: *[Document Title]*, file: *file_name*, page: *page*
+          Citation: Document Title; File: file-name; Page: page
 
       - If no information is found, clearly respond with:
         > "No. This information was not found in the quality management system of \`${client}\`."
