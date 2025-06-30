@@ -37,6 +37,8 @@ export default function AuditManagement({
   const [showCancel, setShowCancel] = useState(false);
   const [showOnlyNotFound, setShowOnlyNotFound] = useState(false);
   const [showNonconformityReport, setShowNonconformityReport] = useState(false);
+  const [activeAgent, setActiveAgent] = useState<string | null>(null);
+  const [activeTool, setActiveTool] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cancelRequestedRef = useRef(false);
@@ -120,28 +122,78 @@ export default function AuditManagement({
     setShowCancel(false);
     cancelRequestedRef.current = false;
   };
+  //     const res = await fetch('/api/query', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ query }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     if (data.answer && report) {
+  //       updateReport({
+  //         qaList: [
+  //           ...(report.qaList || []),
+  //           { question: data.question, answer: data.answer },
+  //         ],
+  //       });
+  //     }
+  //   } catch (error) {
+  //     showError(`Error with query: ${error}`);
+  //     console.error('Error with query:', error);
+  //   }
+  // };
 
   const processQuery = async (query: string) => {
     try {
-      const res = await fetch('/api/query', {
+      const res = await fetch('/api/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, organization: report?.customer || 'paramount' }),
+      });
+  
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+  
+      while (true) {
+        const { done, value } = await reader!.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+      
+        // 🛠️ Detect tool usage metadata
+        if (chunk.includes('[ToolCall]')) {
+          const match = chunk.match(/\[ToolCall\] (.+)/);
+          if (match) {
+            try {
+              const { tool, agent } = JSON.parse(match[1]);
+              console.log(`🛠️ Agent: ${agent} → Tool: ${tool}`);
+              setActiveAgent(agent);
+              setActiveTool(tool);
+            } catch (err) {
+              console.warn('Failed to parse tool call metadata:', err);
+            }
+          }
+          continue;
+        }
+      
+        // ✅ Smart formatting: inject newline before Citation: if missing
+        const formattedChunk = chunk.replace(/(?<!\n)(Citation: )/g, '\n$1');
+      
+        fullText += formattedChunk;
+      }
+      
+      
+  
+      updateReport({
+        qaList: [...(report?.qaList || []), { question: query, answer: fullText }],
       });
 
-      const data = await res.json();
-
-      if (data.answer && report) {
-        updateReport({
-          qaList: [
-            ...(report.qaList || []),
-            { question: data.question, answer: data.answer },
-          ],
-        });
-      }
+      setActiveAgent(null);
+      setActiveTool(null);
     } catch (error) {
-      showError(`Error with query: ${error}`);
-      console.error('Error with query:', error);
+      showError(`Streaming error: ${error}`);
+      console.error('Streaming error:', error);
     }
   };
 
@@ -214,7 +266,18 @@ export default function AuditManagement({
                 ? `Processing ${selectedFile?.name ?? 'file'}...`
                 : submissionProgress !== null
                   ? `Processing ${submissionProgress} / ${selectedQuestions.length}...`
-                  : 'Processing...'}
+                  : activeAgent && activeTool
+                    ? <>
+                        <span>Processing...</span>
+                        {activeAgent && activeTool && (
+                          <span className='mt-1 text-sm text-gray-600 flex items-center gap-2'>
+                            <span>🤖 {activeAgent}</span>
+                            <span className='text-gray-400'>→</span>
+                            <span>🛠️ {activeTool}</span>
+                          </span>
+                        )}
+                      </>
+                    : 'Processing...'}
           </span>
           {loading && (
             <button
