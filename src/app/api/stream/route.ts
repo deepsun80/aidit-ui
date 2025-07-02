@@ -2,24 +2,28 @@
 
 import { MastraClient } from '@mastra/client-js';
 import { NextRequest } from 'next/server';
+import { RuntimeContext } from '@mastra/core/di';
 
 const client = new MastraClient({
   baseUrl: process.env.MASTRA_BASE_URL!,
 });
 
 export async function POST(req: NextRequest) {
-  const { query, organization } = await req.json();
-  const org = organization || 'paramount';
+  const { query, clientOrganization } = await req.json();
+  const org = clientOrganization || 'cg_labs';
 
   const agentName = 'QueryRouterAgent';
   const agent = client.getAgent(agentName);
+
+  const runtimeContext = new RuntimeContext();
+  runtimeContext.set('clientOrganization', org);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       const response = await agent.stream({
         messages: [{ role: 'user', content: query }],
-        context: [{ role: 'system', content: `The organization is "${org}".` }],
+        runtimeContext,
       });
 
       await response.processDataStream({
