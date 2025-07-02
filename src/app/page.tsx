@@ -1,21 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Sidebar from '@/components/SideBar';
+import Header from '@/components/common/Header';
+import Sidebar from '@/components/common/SideBar';
 import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
 import AuditManagement from '@/pages/AuditManagement';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
-import GlobalError from '@/components/GlobalError';
+import GlobalError from '@/components/common/GlobalError';
 import type { QAReport } from '@/types/qa';
 
 export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
     'dashboard' | 'audit' | 'supplier'
-  >('audit');
+  >('supplier');
 
   // === Report state ===
   const [report, setReport] = useState<QAReport | null>(null);

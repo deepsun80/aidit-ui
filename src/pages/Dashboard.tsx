@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import NonconformityProgress from '@/components/NonconformityProgress';
-import AlertPopover from '@/components/AlertPopover';
-import AnalyticsTab from '@/components/AnalyticsTab';
+import NonconformityProgress from '@/components/common/NonconformityProgress';
+import AlertPopover from '@/components/Dashboard/AlertPopover';
+import AnalyticsTab from '@/components/Dashboard/AnalyticsTab';
 
 type Tab = 'pending' | 'recent' | 'scheduled' | 'analytics';
 
@@ -248,8 +248,8 @@ export default function Dashboard() {
                     percentage <= 25
                       ? '#22c55e'
                       : percentage <= 50
-                        ? '#F97316'
-                        : '#DC2626';
+                      ? '#F97316'
+                      : '#DC2626';
 
                   return (
                     <tr key={idx} className='border-b border-gray-100'>
@@ -261,8 +261,8 @@ export default function Dashboard() {
                             activeTab === 'scheduled' && idx === 0
                               ? 'text-red-600 font-medium'
                               : activeTab === 'scheduled' && idx === 1
-                                ? 'text-orange-500 font-medium'
-                                : 'text-blue-600'
+                              ? 'text-orange-500 font-medium'
+                              : 'text-blue-600'
                           }`}
                         >
                           {item.id}

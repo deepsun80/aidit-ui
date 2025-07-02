@@ -108,7 +108,7 @@ export default function RunAssessment({
 
       <div className='bg-white rounded-md shadow-md border border-gray-300 p-6 relative'>
         {loadingIndex !== null && (
-          <div className='absolute inset-0 bg-white bg-opacity-90 z-10 flex flex-col items-center justify-center'>
+          <div className='absolute inset-0 bg-white/90 z-10 flex flex-col items-center justify-center'>
             <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
             <p className='mt-3 text-sm text-gray-700'>
               Generating Question {loadingIndex + 1} of {allQuestions.length}...

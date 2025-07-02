@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import './globals.css';
 import { getServerSession } from 'next-auth';
-import SessionProvider from '@/components/SessionProvider'; // Create this file if it doesn't exist
+import SessionProvider from '@/components/common/SessionProvider'; // Create this file if it doesn't exist
 
 // Load Roboto font
 const roboto = Roboto({

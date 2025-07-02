@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import SupplierList from '@/components/SupplierList';
-import SupplierAssessmentView from '@/components/SupplierAssessmentView';
-import RunAssessment from '@/components/RunAssessment';
-import { allSuppliers } from '@/components/SupplierList';
+import { useState } from 'react';
+import SupplierList from '@/components/SupplierAudit/SupplierList';
+import SupplierAssessmentView from '@/components/SupplierAudit/SupplierAssessmentView';
+import RunAssessment from '@/components/SupplierAudit/RunAssessment';
 
 type Supplier = {
   name: string;
@@ -15,10 +14,6 @@ type Supplier = {
 export default function SupplierAudit() {
   const [activeSupplier, setActiveSupplier] = useState<Supplier | null>(null);
   const [runningAssessment, setRunningAssessment] = useState(false);
-
-  useEffect(() => {
-    setActiveSupplier(allSuppliers[1]);
-  }, []);
 
   return (
     <div className='text-gray-900'>

@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import ChatPrompt from '@/components/ChatPrompt';
-import QuestionSelector from '@/components/QuestionSelector';
-import QACards from '@/components/QACards';
-import NonconformityReport from '@/components/NonconformityReport';
-import WelcomeScreen from '@/components/WelcomeScreen';
-import CreateReport from '@/components/CreateReport';
+import ChatPrompt from '@/components/AuditManagement/ChatPrompt';
+import QuestionSelector from '@/components/AuditManagement/QuestionSelector';
+import QACards from '@/components/AuditManagement/QACards';
+import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
+import WelcomeScreen from '@/components/AuditManagement/WelcomeScreen';
+import CreateReport from '@/components/AuditManagement/CreateReport';
 import type { QAReport } from '@/types/qa';
 import { handleDownloadPDF } from '@lib/downloadPDF';
 
@@ -149,18 +149,21 @@ export default function AuditManagement({
       const res = await fetch('/api/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, organization: report?.customer || 'paramount' }),
+        body: JSON.stringify({
+          query,
+          organization: report?.customer || 'paramount',
+        }),
       });
-  
+
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
-  
+
       while (true) {
         const { done, value } = await reader!.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-      
+
         // 🛠️ Detect tool usage metadata
         if (chunk.includes('[ToolCall]')) {
           const match = chunk.match(/\[ToolCall\] (.+)/);
@@ -176,17 +179,18 @@ export default function AuditManagement({
           }
           continue;
         }
-      
+
         // ✅ Smart formatting: inject newline before Citation: if missing
         const formattedChunk = chunk.replace(/(?<!\n)(Citation: )/g, '\n$1');
-      
+
         fullText += formattedChunk;
       }
-      
-      
-  
+
       updateReport({
-        qaList: [...(report?.qaList || []), { question: query, answer: fullText }],
+        qaList: [
+          ...(report?.qaList || []),
+          { question: query, answer: fullText },
+        ],
       });
 
       setActiveAgent(null);
@@ -245,7 +249,7 @@ export default function AuditManagement({
 
   if (!hasMounted) {
     return (
-      <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
+      <div className='fixed top-0 left-0 w-full h-full bg-gray-100/75 flex flex-col items-center justify-center z-50'>
         <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
         <span className='mt-2 text-gray-700 text-sm text-center px-4'>
           Initializing...
@@ -257,27 +261,29 @@ export default function AuditManagement({
   return (
     <>
       {(loading || uploading) && (
-        <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
+        <div className='fixed top-0 left-0 w-full h-full bg-gray-100/75 flex flex-col items-center justify-center z-50'>
           <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
           <span className='mt-2 text-gray-700 text-sm text-center px-4'>
-            {showCancel
-              ? 'Cancelling...'
-              : uploading
-                ? `Processing ${selectedFile?.name ?? 'file'}...`
-                : submissionProgress !== null
-                  ? `Processing ${submissionProgress} / ${selectedQuestions.length}...`
-                  : activeAgent && activeTool
-                    ? <>
-                        <span>Processing...</span>
-                        {activeAgent && activeTool && (
-                          <span className='mt-1 text-sm text-gray-600 flex items-center gap-2'>
-                            <span>🤖 {activeAgent}</span>
-                            <span className='text-gray-400'>→</span>
-                            <span>🛠️ {activeTool}</span>
-                          </span>
-                        )}
-                      </>
-                    : 'Processing...'}
+            {showCancel ? (
+              'Cancelling...'
+            ) : uploading ? (
+              `Processing ${selectedFile?.name ?? 'file'}...`
+            ) : submissionProgress !== null ? (
+              `Processing ${submissionProgress} / ${selectedQuestions.length}...`
+            ) : activeAgent && activeTool ? (
+              <>
+                <span>Processing...</span>
+                {activeAgent && activeTool && (
+                  <span className='mt-1 text-sm text-gray-600 flex items-center gap-2'>
+                    <span>🤖 {activeAgent}</span>
+                    <span className='text-gray-400'>→</span>
+                    <span>🛠️ {activeTool}</span>
+                  </span>
+                )}
+              </>
+            ) : (
+              'Processing...'
+            )}
           </span>
           {loading && (
             <button
@@ -353,7 +359,7 @@ export default function AuditManagement({
       )}
 
       {showChat && (
-        <div className='absolute top-0 left-0 w-full h-full bg-gray-100 bg-opacity-95 z-40 flex items-center justify-center'>
+        <div className='absolute top-0 left-0 w-full h-full bg-gray-100/95 z-40 flex items-center justify-center'>
           <ChatPrompt
             input={input}
             onInputChange={setInput}

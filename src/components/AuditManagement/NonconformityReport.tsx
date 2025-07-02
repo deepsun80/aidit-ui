@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import NonconformityProgress from '@/components/NonconformityProgress';
+import NonconformityProgress from '@/components/common/NonconformityProgress';
 
 interface QAItem {
   question: string;
@@ -62,8 +62,8 @@ export default function NonconformityReport({
     notFoundPercentage <= 25
       ? '#22c55e'
       : notFoundPercentage <= 50
-        ? '#F97316'
-        : '#DC2626';
+      ? '#F97316'
+      : '#DC2626';
 
   const handleClickScrollTo = (qaNumber: number) => {
     onBack();

@@ -14,7 +14,7 @@ import {
   UploadIcon,
   EyeOpenIcon,
 } from '@radix-ui/react-icons';
-import NonconformityProgress from '@/components/NonconformityProgress';
+import NonconformityProgress from '@/components/common/NonconformityProgress';
 import type { QAReport } from '@/types/qa';
 
 interface QACardsProps {
@@ -63,8 +63,8 @@ export default function QACards({
     notFoundPercentage <= 25
       ? '#48bb78'
       : notFoundPercentage <= 50
-        ? '#F97316'
-        : '#DC2626';
+      ? '#F97316'
+      : '#DC2626';
 
   const filteredList = showOnlyNotFound
     ? qaList.filter((qa) => qa.answer.trim().toLowerCase().startsWith('no'))
@@ -197,7 +197,9 @@ export default function QACards({
           <div
             key={index}
             id={`qa-${index + 1}`}
-            className={`p-6 bg-white shadow-md rounded-md border ${isNotFound ? 'border-red-500' : 'border-gray-300'} relative`}
+            className={`p-6 bg-white shadow-md rounded-md border ${
+              isNotFound ? 'border-red-500' : 'border-gray-300'
+            } relative`}
           >
             <div className='flex justify-between items-center mb-2'>
               <div className='flex flex-col'>
@@ -207,12 +209,16 @@ export default function QACards({
                 {referenceText && (
                   <div className='flex items-center mt-1 gap-2'>
                     <p
-                      className={`text-sm italic ${isNotFound ? 'text-red-600' : 'text-gray-500'}`}
+                      className={`text-sm italic ${
+                        isNotFound ? 'text-red-600' : 'text-gray-500'
+                      }`}
                     >
                       Standard Reference: {referenceText}
                     </p>
                     <span
-                      className={`w-4 h-4 rounded-full flex items-center justify-center ${isNotFound ? 'bg-red-500' : 'bg-green-500'}`}
+                      className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        isNotFound ? 'bg-red-500' : 'bg-green-500'
+                      }`}
                     >
                       {isNotFound ? (
                         <Cross2Icon className='w-4 h-4 text-white' />
