@@ -5,6 +5,7 @@ import SupplierList from '@/components/SupplierAudit/SupplierList';
 import SupplierAssessmentView from '@/components/SupplierAudit/SupplierAssessmentView';
 import RunSupplierAssessment from '@/components/SupplierAudit/RunSupplierAssessment';
 import QACards from '@/components/common/QACards';
+import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
 import { QA } from '@/types/qa';
 
 type Supplier = {
@@ -56,6 +57,7 @@ export default function SupplierAudit() {
   const [activeSupplier, setActiveSupplier] = useState<Supplier | null>(null);
   const [runningAssessment, setRunningAssessment] = useState(false);
   const [showOnlyNotFound, setShowOnlyNotFound] = useState(false);
+  const [showNonconformityReport, setShowNonconformityReport] = useState(false);
   const [viewingAudit, setViewingAudit] = useState<{
     auditId: string;
     date: string;
@@ -77,6 +79,7 @@ export default function SupplierAudit() {
 
   const handleBackToAssessment = () => {
     setViewingAudit(null);
+    setShowNonconformityReport(false);
   };
 
   return (
@@ -103,7 +106,22 @@ export default function SupplierAudit() {
         />
       )}
 
-      {viewingAudit && (
+      {viewingAudit && showNonconformityReport && (
+        <NonconformityReport
+          qaList={viewingAudit.qaList}
+          notFoundCount={
+            viewingAudit.qaList.filter((q) =>
+              q.answer.trim().toLowerCase().startsWith('no')
+            ).length
+          }
+          onBack={() => setShowNonconformityReport(false)}
+          auditId={viewingAudit.auditId}
+          customer={viewingAudit.supplier.name}
+          date={viewingAudit.date}
+        />
+      )}
+
+      {viewingAudit && !showNonconformityReport && (
         <QACards
           qaList={viewingAudit.qaList}
           report={{
@@ -121,7 +139,7 @@ export default function SupplierAudit() {
           showOnlyNotFound={showOnlyNotFound}
           setShowOnlyNotFound={setShowOnlyNotFound}
           onDownload={() => {}}
-          onViewReport={() => {}}
+          onViewReport={() => setShowNonconformityReport(true)}
           onAskNew={() => {}}
           onUploadNew={() => {}}
           onViewUploaded={() => {}}

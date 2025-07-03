@@ -5,6 +5,7 @@ import RegulationList from '@/components/InternalAudit/RegulationList';
 import RegulationAssessmentView from '@/components/InternalAudit/RegulationAssessmentView';
 import RunInternalAssessment from '@/components/InternalAudit/RunInternalAssessment';
 import QACards from '@/components/common/QACards';
+import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
 import { QA } from '@/types/qa';
 
 type Regulation = {
@@ -86,6 +87,7 @@ export default function InternalAudit() {
   );
   const [runningAssessment, setRunningAssessment] = useState(false);
   const [showOnlyNotFound, setShowOnlyNotFound] = useState(false);
+  const [showNonconformityReport, setShowNonconformityReport] = useState(false);
   const [viewingAudit, setViewingAudit] = useState<{
     auditId: string;
     date: string;
@@ -107,6 +109,7 @@ export default function InternalAudit() {
 
   const handleBackToAssessment = () => {
     setViewingAudit(null);
+    setShowNonconformityReport(false);
   };
 
   return (
@@ -132,7 +135,22 @@ export default function InternalAudit() {
         />
       )}
 
-      {viewingAudit && (
+      {viewingAudit && showNonconformityReport && (
+        <NonconformityReport
+          qaList={viewingAudit.qaList}
+          notFoundCount={
+            viewingAudit.qaList.filter((q) =>
+              q.answer.trim().toLowerCase().startsWith('no')
+            ).length
+          }
+          onBack={() => setShowNonconformityReport(false)}
+          auditId={viewingAudit.auditId}
+          customer='Internal'
+          date={viewingAudit.date}
+        />
+      )}
+
+      {viewingAudit && !showNonconformityReport && (
         <QACards
           qaList={viewingAudit.qaList}
           report={{
@@ -150,7 +168,7 @@ export default function InternalAudit() {
           showOnlyNotFound={showOnlyNotFound}
           setShowOnlyNotFound={setShowOnlyNotFound}
           onDownload={() => {}}
-          onViewReport={() => {}}
+          onViewReport={() => setShowNonconformityReport(true)}
           onAskNew={() => {}}
           onUploadNew={() => {}}
           onViewUploaded={() => {}}

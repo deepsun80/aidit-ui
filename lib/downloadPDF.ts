@@ -37,12 +37,10 @@ export function handleDownloadPDF(
 
     const lines = qa.answer.split('\n');
     const citationLine = lines.find((line) =>
-      line.toLowerCase().startsWith('cited from:')
+      line.toLowerCase().startsWith('citation:')
     );
     const mainAnswerLines = lines.filter(
-      (line) =>
-        !line.toLowerCase().startsWith('cited from:') &&
-        !line.toLowerCase().startsWith('found in context:')
+      (line) => !line.toLowerCase().startsWith('citation:')
     );
     const formattedAnswer = `A: ${mainAnswerLines.join('\n   ')}`;
     const wrappedAnswer = doc.splitTextToSize(formattedAnswer, maxWidth);
@@ -50,10 +48,7 @@ export function handleDownloadPDF(
       ? doc.splitTextToSize(citationLine, maxWidth)
       : [];
 
-    const isNonconformity = lines
-      .at(-1)
-      ?.toLowerCase()
-      .includes('found in context: false');
+    const isNonconformity = qa.answer.trim().toLowerCase().startsWith('no');
 
     const requiredHeight =
       6 +

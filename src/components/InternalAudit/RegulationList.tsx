@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/common/NonconformityProgress';
 
 type Regulation = {
@@ -41,7 +41,7 @@ export default function RegulationList({
   return (
     <>
       {/* Search */}
-      <div className='flex justify-end mb-6 relative'>
+      <div className='flex justify-end mb-6 relative gap-2 items-center'>
         <div className='relative w-full max-w-sm'>
           <input
             type='text'
@@ -52,6 +52,14 @@ export default function RegulationList({
           />
           <MagnifyingGlassIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5' />
         </div>
+
+        {/* Add Regulation button */}
+        <button
+          className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+          title='Add Supplier'
+        >
+          <PlusIcon className='text-white w-5 h-5' />
+        </button>
       </div>
 
       {/* Table */}

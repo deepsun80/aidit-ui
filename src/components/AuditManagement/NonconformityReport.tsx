@@ -31,9 +31,7 @@ export default function NonconformityReport({
 }: NonconformityReportProps) {
   const notFoundItems = qaList
     .map((qa, index) => ({ ...qa, index }))
-    .filter((qa) =>
-      qa.answer.toLowerCase().includes('found in context: false')
-    );
+    .filter((qa) => qa.answer.toLowerCase().startsWith('no'));
 
   const referenceMap: ReportData = {};
 
@@ -99,7 +97,7 @@ export default function NonconformityReport({
           onClick={onBack}
           className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
         >
-          View Audit
+          View Assessment
         </button>
       </div>
 
