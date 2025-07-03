@@ -1,55 +1,78 @@
 'use client';
 
-import { useState, useMemo } from 'react';
 import { CaretLeftIcon } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/common/NonconformityProgress';
 
-type Supplier = {
+type Regulation = {
   name: string;
   date: string;
-  risk: 'low' | 'medium' | 'high';
+  notFound: number;
+  total: number;
 };
 
-interface SupplierAssessmentViewProps {
-  supplier: Supplier;
-  onRunAssessment: () => void;
-  onBack: () => void;
-  onViewReport: (auditId: string, date: string) => void;
+interface Assessment {
+  auditId: string;
+  date: string;
+  notFound: number;
+  total: number;
 }
 
-export default function SupplierAssessmentView({
-  supplier,
-  onRunAssessment,
-  onBack,
-  onViewReport,
-}: SupplierAssessmentViewProps) {
-  const [supplierInfo] = useState({
-    address: '1234 Compliance Blvd, MedCity, USA',
-    number: `SUP-${Math.floor(Math.random() * 9000 + 1000)}`,
-    category: 'Raw Materials',
-  });
-
-  const abbrev = supplier.name
+function generateMockHistory(reg: Regulation): Assessment[] {
+  const baseDate = new Date(reg.date);
+  const abbrev = reg.name
     .split(' ')
-    .map((word) => word[0])
+    .map((w) => w[0])
     .join('')
     .toUpperCase()
     .slice(0, 3);
 
-  const mockHistory = useMemo(() => {
-    const baseDate = new Date('2025-01-15');
-    return Array.from({ length: 8 }).map((_, i) => {
-      const date = new Date(baseDate);
-      date.setDate(baseDate.getDate() - i * 45);
-      const dateStr = date.toLocaleDateString('en-US');
-      const id = `${String(date.getMonth() + 1).padStart(2, '0')}${String(
-        date.getDate()
-      ).padStart(2, '0')}${date.getFullYear()}${abbrev}`;
-      const total = Math.floor(Math.random() * 15 + 10);
-      const notFound = Math.floor(Math.random() * (total * 0.6));
-      return { auditId: id, date: dateStr, notFound, total };
+  const history: Assessment[] = [];
+
+  // First item matches the regulation’s values exactly
+  history.push({
+    auditId: `${String(baseDate.getMonth() + 1).padStart(2, '0')}${String(
+      baseDate.getDate()
+    ).padStart(2, '0')}${baseDate.getFullYear()}${abbrev}`,
+    date: baseDate.toLocaleDateString('en-US'),
+    notFound: reg.notFound,
+    total: reg.total,
+  });
+
+  // Generate the rest as random historical data
+  for (let i = 1; i < 6; i++) {
+    const date = new Date(baseDate);
+    date.setDate(baseDate.getDate() - i * 40);
+    const dateStr = date.toLocaleDateString('en-US');
+    const id = `${String(date.getMonth() + 1).padStart(2, '0')}${String(
+      date.getDate()
+    ).padStart(2, '0')}${date.getFullYear()}${abbrev}`;
+
+    const total = Math.floor(Math.random() * 30 + 10);
+    const notFound = Math.floor(Math.random() * (total * 0.3));
+
+    history.push({
+      auditId: id,
+      date: dateStr,
+      notFound,
+      total,
     });
-  }, [abbrev]);
+  }
+
+  return history;
+}
+
+export default function RegulationAssessmentView({
+  regulation,
+  onRunAssessment,
+  onBack,
+  onViewReport,
+}: {
+  regulation: Regulation;
+  onRunAssessment: () => void;
+  onBack: () => void;
+  onViewReport: (auditId: string, date: string) => void;
+}) {
+  const mockHistory = generateMockHistory(regulation);
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4'>
@@ -57,17 +80,24 @@ export default function SupplierAssessmentView({
       <div className='flex justify-between items-start'>
         <div>
           <h2 className='text-lg font-semibold text-gray-900 mb-1'>
-            {supplier.name} Supplier Assessment
+            {regulation.name} — Audit History
           </h2>
-          <p className='text-sm text-gray-600'>{supplierInfo.address}</p>
           <p className='text-sm text-gray-600'>
-            Supplier Number:
-            <span className='font-bold'> {supplierInfo.number}</span>
+            Last Audit: <strong>{regulation.date}</strong>
           </p>
-          <p className='text-sm text-gray-600'>
-            Category:{' '}
-            <span className='font-bold'> {supplierInfo.category}</span>
-          </p>
+          <div className='mt-2'>
+            <NonconformityProgress
+              notFoundCount={regulation.notFound}
+              totalCount={regulation.total}
+              barColor={
+                regulation.notFound / regulation.total <= 0.25
+                  ? '#22c55e'
+                  : regulation.notFound / regulation.total <= 0.5
+                  ? '#F97316'
+                  : '#DC2626'
+              }
+            />
+          </div>
         </div>
         <button
           onClick={onBack}
@@ -80,11 +110,9 @@ export default function SupplierAssessmentView({
 
       {/* History Table */}
       <div className='bg-white shadow-md rounded-sm border border-gray-300 p-6'>
-        <div className='flex justify-between items-center mb-4'>
-          <h3 className='text-md font-semibold text-gray-900'>
-            Assessment History
-          </h3>
-        </div>
+        <h3 className='text-md font-semibold text-gray-900 mb-4'>
+          Assessment History
+        </h3>
         <table className='min-w-full text-sm text-left text-gray-800'>
           <thead className='border-b border-gray-300'>
             <tr>
@@ -122,7 +150,7 @@ export default function SupplierAssessmentView({
         </table>
       </div>
 
-      {/* Create New Assessment Button */}
+      {/* Button */}
       <div className='w-full flex justify-end'>
         <button
           onClick={onRunAssessment}

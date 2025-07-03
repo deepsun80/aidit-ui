@@ -5,6 +5,7 @@ import Header from '@/components/common/Header';
 import Sidebar from '@/components/common/SideBar';
 import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
+import InternalAudit from '@/pages/InternalAudit';
 import AuditManagement from '@/pages/AuditManagement';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
@@ -14,8 +15,8 @@ import type { QAReport } from '@/types/qa';
 export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
-    'dashboard' | 'audit' | 'supplier'
-  >('supplier');
+    'dashboard' | 'audit' | 'supplier' | 'internal'
+  >('internal');
 
   // === Report state ===
   const [report, setReport] = useState<QAReport | null>(null);
@@ -107,6 +108,7 @@ export default function Home() {
             />
           )}
           {activePage === 'supplier' && <SupplierAudit />}
+          {activePage === 'internal' && <InternalAudit />}
         </main>
         {error && <GlobalError error={error} clearError={clearError} />}
       </div>

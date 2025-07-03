@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   CaretUpIcon,
   CaretDownIcon,
+  CaretLeftIcon,
   Pencil1Icon,
   TrashIcon,
   DownloadIcon,
@@ -15,7 +16,12 @@ import {
   EyeOpenIcon,
 } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/common/NonconformityProgress';
-import type { QAReport } from '@/types/qa';
+
+interface QAReportMetadata {
+  auditId: string;
+  date: string;
+  customer: string;
+}
 
 interface QACardsProps {
   qaList: { question: string; answer: string }[];
@@ -26,11 +32,14 @@ interface QACardsProps {
   setShowOnlyNotFound: (val: boolean) => void;
   onDownload: () => void;
   onViewReport: () => void;
-  report: QAReport;
+  report: QAReportMetadata;
   onAskNew: () => void;
   onUploadNew: () => void;
   onViewUploaded: () => void;
   hasUploadedQuestions: boolean;
+  showControls?: boolean;
+  onBack?: () => void;
+  submit?: boolean;
 }
 
 export default function QACards({
@@ -47,6 +56,9 @@ export default function QACards({
   onUploadNew,
   onViewUploaded,
   hasUploadedQuestions,
+  showControls = true,
+  onBack,
+  submit = false,
 }: QACardsProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -101,32 +113,42 @@ export default function QACards({
             Requested Date: <span className='font-semibold'>{report.date}</span>
           </p>
         </div>
-        <div className='flex gap-2'>
-          <button
-            onClick={onAskNew}
-            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
-            title='Ask New Question'
-          >
-            <PlusIcon className='text-white w-5 h-5' />
-          </button>
-          <div className='relative'>
+        {showControls ? (
+          <div className='flex gap-2'>
             <button
-              onClick={onViewUploaded}
-              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
-              disabled={!hasUploadedQuestions}
-              title='View Uploaded Questions'
+              onClick={onAskNew}
+              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+              title='Ask New Question'
             >
-              <EyeOpenIcon className='text-white w-5 h-5' />
+              <PlusIcon className='text-white w-5 h-5' />
+            </button>
+            <div className='relative'>
+              <button
+                onClick={onViewUploaded}
+                className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
+                disabled={!hasUploadedQuestions}
+                title='View Uploaded Questions'
+              >
+                <EyeOpenIcon className='text-white w-5 h-5' />
+              </button>
+            </div>
+            <button
+              onClick={onUploadNew}
+              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+              title='Upload New Questions'
+            >
+              <UploadIcon className='text-white w-5 h-5' />
             </button>
           </div>
+        ) : (
           <button
-            onClick={onUploadNew}
-            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
-            title='Upload New Questions'
+            onClick={onBack}
+            className='w-9 h-9 rounded-full bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center'
+            title='Back'
           >
-            <UploadIcon className='text-white w-5 h-5' />
+            <CaretLeftIcon className='w-5 h-5' />
           </button>
-        </div>
+        )}
       </div>
 
       {/* Progress Bar and Controls */}
@@ -340,11 +362,13 @@ export default function QACards({
       <div ref={bottomRef} />
 
       {/* Sticky Submit Footer */}
-      <div className='sticky bottom-0 left-0 w-full flex justify-end'>
-        <button className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 transition'>
-          Submit
-        </button>
-      </div>
+      {submit && (
+        <div className='sticky bottom-0 left-0 w-full flex justify-end'>
+          <button className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 transition'>
+            Submit
+          </button>
+        </div>
+      )}
     </div>
   );
 }

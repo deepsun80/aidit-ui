@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ChatPrompt from '@/components/AuditManagement/ChatPrompt';
-import QuestionSelector from '@/components/AuditManagement/QuestionSelector';
-import QACards from '@/components/AuditManagement/QACards';
+import QuestionSelector from '@/components/common/QuestionSelector';
+import QACards from '@/components/common/QACards';
 import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
 import WelcomeScreen from '@/components/AuditManagement/WelcomeScreen';
 import CreateReport from '@/components/AuditManagement/CreateReport';
@@ -322,6 +322,7 @@ export default function AuditManagement({
           onSubmit={handleSubmitQuestions}
           disableCancel={qaList.length === 0}
           deleteQuestions={deleteQuestions}
+          disableTitle={false}
         />
       ) : qaList.length > 0 ? (
         showNonconformityReport ? (
@@ -348,6 +349,7 @@ export default function AuditManagement({
             onUploadNew={() => fileInputRef.current?.click()}
             onViewUploaded={() => setShowQuestionSelector(true)}
             hasUploadedQuestions={(report?.questions?.length || 0) > 0}
+            submit={true}
           />
         )
       ) : (

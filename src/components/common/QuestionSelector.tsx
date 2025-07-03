@@ -12,6 +12,7 @@ interface QuestionSelectorProps {
   setQuestions: (questions: { question: string; reference?: string }[]) => void;
   deleteQuestions: () => void;
   disableCancel?: boolean;
+  disableTitle?: boolean;
 }
 
 export default function QuestionSelector({
@@ -23,6 +24,7 @@ export default function QuestionSelector({
   selectedFile,
   deleteQuestions,
   disableCancel = true,
+  disableTitle = true,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -99,19 +101,23 @@ export default function QuestionSelector({
 
   return (
     <div className='max-w-4xl mx-auto text-gray-900 flex flex-col gap-4'>
-      <p className='font-semibold text-lg'>Uploaded File Questions</p>
+      {!disableTitle && (
+        <p className='font-semibold text-lg'>Uploaded File Questions</p>
+      )}
       <div className='bg-white rounded-sm border border-gray-300 p-6'>
         {/* Sticky Header */}
         <div className='sticky top-0 bg-white border-b border-gray-300 pb-4 mb-2 pr-2 z-10 flex justify-between items-center'>
           <div className='flex gap-4 items-center'>
-            <div className='text-md text-gray-700'>
-              <p className='text-sm font-semibold'>
-                File:{' '}
-                <span className='text-gray-500 italic font-normal'>
-                  {selectedFile}
-                </span>
-              </p>
-            </div>
+            {selectedFile && (
+              <div className='text-md text-gray-700'>
+                <p className='text-sm font-semibold'>
+                  File:{' '}
+                  <span className='text-gray-500 italic font-normal'>
+                    {selectedFile}
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* Trash Icon with Popover */}
             <div className='relative'>
@@ -162,7 +168,7 @@ export default function QuestionSelector({
         </div>
 
         {/* Question List */}
-        <div className='overflow-y-auto'>
+        <div className='overflow-y-auto min-h-24'>
           {questions.map((q, index) => {
             const fullText = `${q.question}${
               q.reference ? ` - ${q.reference}` : ''
@@ -259,7 +265,7 @@ export default function QuestionSelector({
             className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
             disabled={selectedQuestions.length === 0}
           >
-            Submit
+            Run Assessment
           </button>
         </div>
       </div>
