@@ -130,7 +130,7 @@ export default function AuditManagement({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query,
-          organization: report?.customer || 'paramount',
+          organization: report?.customer || 'cg_labs',
         }),
       });
 

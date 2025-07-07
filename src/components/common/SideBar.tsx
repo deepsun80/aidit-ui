@@ -38,7 +38,11 @@ export default function Sidebar({
               : 'text-gray-300 hover:text-white'
           }`}
         >
-          <DashboardIcon className='w-6 h-6 text-inherit' />
+          <DashboardIcon
+            className={`w-6 h-6 ${
+              activePage === 'dashboard' ? 'text-blue-400' : 'text-inherit'
+            }`}
+          />
           <span>Dashboard</span>
         </button>
 
@@ -53,7 +57,11 @@ export default function Sidebar({
             }`}
           >
             <div className='flex gap-2'>
-              <FileTextIcon className='w-6 h-6 text-inherit' />
+              <FileTextIcon
+                className={`w-6 h-6 ${
+                  activePage === 'audit' ? 'text-blue-400' : 'text-inherit'
+                }`}
+              />
               <span>Audit Management</span>
             </div>
             <CaretUpIcon className='w-4 h-4 text-inherit' />
@@ -86,7 +94,11 @@ export default function Sidebar({
               : 'text-gray-300 hover:text-white'
           }`}
         >
-          <ArchiveIcon className='w-6 h-6 text-inherit' />
+          <ArchiveIcon
+            className={`w-6 h-6 ${
+              activePage === 'supplier' ? 'text-blue-400' : 'text-inherit'
+            }`}
+          />
           <span>Supplier Audits</span>
         </button>
 
@@ -98,7 +110,11 @@ export default function Sidebar({
               : 'text-gray-300 hover:text-white'
           }`}
         >
-          <LayersIcon className='w-6 h-6 text-inherit' />
+          <LayersIcon
+            className={`w-6 h-6 ${
+              activePage === 'internal' ? 'text-blue-400' : 'text-inherit'
+            }`}
+          />
           <span>Internal Audits</span>
         </button>
       </nav>

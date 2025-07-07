@@ -16,7 +16,7 @@ const client = new MastraClient({
 export async function POST(req: NextRequest) {
   try {
     const { query, organization } = await req.json();
-    const org = organization || 'paramount';
+    const org = organization || 'cg_labs';
 
     const agent = client.getAgent('QueryRouterAgent');
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     //   messages: [{ role: 'user', content: query }],
     //   context: [{ role: 'system', content: `The organization is "${org}".` }],
     // });
-    
+
     // Initialize fullText collector
     let fullText = '';
 
