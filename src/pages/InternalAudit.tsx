@@ -21,64 +21,86 @@ export type QuestionBankEntry = {
   reference: string;
 };
 
-const questionBank: Record<string, Omit<QuestionBankEntry, 'answer'>[]> = {
-  '21 CFR Part 803': [
+const questionBank: Record<string, QuestionBankEntry[]> = {
+  'Quality System': [
     {
       id: 1,
       question:
-        'Does the organization have procedures for Medical Device Reporting (MDR)?',
-      reference: '21 CFR §803.17',
+        'Is there a formal organization approved quality policy statement?',
+      reference: 'CFR 820.20(a); ISO 9001/13485 5.3',
     },
     {
       id: 2,
-      question: 'Are employees trained to identify and report adverse events?',
-      reference: '21 CFR §803.10',
+      question:
+        'Is the quality policy statement clearly posted, communicated, and understood?',
+      reference: 'CFR 820.20(a); ISO 9001/13485 5.3',
     },
     {
       id: 3,
       question:
-        'Is there a process for submitting serious injury and death reports within 30 days?',
-      reference: '21 CFR §803.20',
+        'Have quality system procedures and instructions ben established and maintained?',
+      reference: 'CFR 820.20(e); 820.186, ISO 9001/13485 4.2.1',
     },
     {
       id: 4,
       question:
-        'Does the system maintain adequate records of all reportable events?',
-      reference: '21 CFR §803.18',
+        'Is there an approved Quality System Record that includes location of all QMS procedures that are not specific to a particular type of device?',
+      reference: 'CFR 820.20(e); 820.186, ISO 9001/13485 4.2.1',
     },
     {
       id: 5,
       question:
-        'Are annual summary reports prepared and submitted as required?',
-      reference: '21 CFR §803.33',
-    },
-  ],
-  default: [
-    {
-      id: 1,
-      question: 'Is the organization compliant with the stated regulation?',
-      reference: '',
+        'Does the quality manual state the scope of QMS including justification for any exclusions from referenced standards and regulations?',
+      reference: 'ISO 9001/13485 4.2.2',
     },
     {
-      id: 2,
-      question: 'Are procedures documented and accessible to personnel?',
-      reference: '',
+      id: 6,
+      question:
+        'Has the organization identified processes needed in its QMS, determined the sequence and interaction of those processes ,and established criteria to ensure the quality objectives are attained?',
+      reference: 'ISO 9001/13485 4.1',
+    },
+    {
+      id: 7,
+      question:
+        'Are changes to the QMS planned, communicated, and implemented in such a way as to maintain the integrity of the QMS?',
+      reference: 'CFR 820.40(b), ISO 9001/13485 5.4.2',
+    },
+    {
+      id: 8,
+      question:
+        'Is there evidence that there is appropriate communication in the organization regarding the effectiveness of the QMS, e.g quality goals, internal/external quality audits, management reviews, and regulatory inspections?',
+      reference: 'ISO 9001/13485 5.5.3',
+    },
+    {
+      id: 9,
+      question:
+        'Does the quality system documentation refer to applicable regulations, directives, laws, and standards, including such items as FDA Quality System Regulation and Medical Device Directive?',
+      reference: 'ISO 13485 4.2.1',
+    },
+    {
+      id: 10,
+      question:
+        'Did management reviews cover all the required topics specified in the quality manual, regulations, standards, and/or management review procedures, and are they identified?',
+      reference: 'CFR 820.20(c), ISO 9001/13485 5.6.2, 5.6.3',
     },
   ],
 };
 
 const generateQAList = (regulationName: string): QA[] => {
-  const base: QuestionBankEntry[] =
-    questionBank[regulationName] || questionBank.default;
+  const base = questionBank[regulationName] || [];
 
-  return base.map((q, idx) => ({
-    ...q,
-    id: q.id || idx + 1,
-    answer:
-      idx % 2 === 0
-        ? 'Yes. The organization complies with this requirement based on documentation reviewed.'
-        : 'No. There is no clear evidence of compliance found in the current procedures.',
-  }));
+  return base.map((q, idx) => {
+    const isNo = [2, 4, 9].includes(idx + 1); // 1-based indexes for No
+    const answer = isNo
+      ? 'No. There is no clear evidence of compliance found in the current procedures.\n\nCitation: Quality Manual; File: QM103-v1 - Quality Manual.pdf; Page: 14'
+      : 'Yes. The organization complies with this requirement based on documentation reviewed.\n\nCitation: Quality Manual; File: QM103-v1 - Quality Manual.pdf; Page: 12';
+
+    return {
+      id: q.id,
+      question: `${q.question} - ${q.reference}`,
+      answer,
+    };
+  });
 };
 
 export default function InternalAudit() {

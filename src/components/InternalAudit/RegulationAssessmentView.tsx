@@ -124,11 +124,22 @@ export default function RegulationAssessmentView({
           <tbody>
             {mockHistory.map((item, idx) => (
               <tr key={idx} className='border-b border-gray-100'>
-                <td
-                  className='py-3 pr-4 text-blue-600 hover:underline cursor-pointer'
-                  onClick={() => onViewReport(item.auditId, item.date)}
-                >
-                  {item.auditId}
+                <td className='py-3 pr-4'>
+                  {idx === 0 ? (
+                    <a
+                      onClick={() => onViewReport(item.auditId, item.date)}
+                      className='text-blue-600 hover:underline cursor-pointer'
+                    >
+                      {item.auditId}
+                    </a>
+                  ) : (
+                    <a
+                      href='#'
+                      className='text-blue-600 hover:underline cursor-pointer'
+                    >
+                      {item.auditId}
+                    </a>
+                  )}
                 </td>
                 <td className='py-3 pr-4'>{item.date}</td>
                 <td className='py-3'>

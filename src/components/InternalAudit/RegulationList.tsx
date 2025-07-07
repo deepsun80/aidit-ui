@@ -12,11 +12,30 @@ type Regulation = {
 };
 
 const allRegulations: Regulation[] = [
-  { name: '21 CFR Part 11', date: '02/15/2025', notFound: 3, total: 20 },
-  { name: '21 CFR Part 803', date: '03/22/2025', notFound: 8, total: 15 },
-  { name: 'ISO 13485', date: '05/10/2025', notFound: 5, total: 18 },
-  { name: 'ISO 9001', date: '06/30/2025', notFound: 2, total: 10 },
-  { name: 'MDSAP Guidance', date: '04/01/2025', notFound: 8, total: 25 },
+  {
+    name: 'Quality System',
+    date: '02/15/2025',
+    notFound: 3,
+    total: 10,
+  },
+  {
+    name: 'QSMR',
+    date: '02/15/2025',
+    notFound: 8,
+    total: 15,
+  },
+  {
+    name: 'Training',
+    date: '02/15/2025',
+    notFound: 5,
+    total: 18,
+  },
+  {
+    name: 'Document Controls',
+    date: '02/15/2025',
+    notFound: 2,
+    total: 10,
+  },
 ];
 
 export default function RegulationList({
@@ -47,7 +66,7 @@ export default function RegulationList({
             type='text'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder='Search Regulation'
+            placeholder='Search Process'
             className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm focus:outline-gray-400'
           />
           <MagnifyingGlassIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5' />
@@ -56,7 +75,7 @@ export default function RegulationList({
         {/* Add Regulation button */}
         <button
           className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
-          title='Add Supplier'
+          title='Add Regulation'
         >
           <PlusIcon className='text-white w-5 h-5' />
         </button>
@@ -67,7 +86,8 @@ export default function RegulationList({
         <table className='min-w-full text-sm text-left text-gray-800'>
           <thead className='border-b border-gray-300'>
             <tr>
-              <th className='py-2 pr-4 font-semibold'>Regulation</th>
+              <th className='py-2 pr-4 font-semibold'>Process</th>
+              <th className='py-2 pr-4 font-semibold'>Regulations</th>
               <th className='py-2 pr-4 font-semibold'>Last Audit Date</th>
               <th className='py-2 font-semibold'>Nonconformities</th>
             </tr>
@@ -80,13 +100,16 @@ export default function RegulationList({
                     href='#'
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveRegulation(reg);
+                      if (reg.name === 'Quality System') {
+                        setActiveRegulation(reg);
+                      }
                     }}
                     className='text-blue-600 hover:underline'
                   >
                     {reg.name}
                   </a>
                 </td>
+                <td className='py-4 pr-4'>21 CFR 820, ISO 9001, ISO 13485</td>
                 <td className='py-4 pr-4'>{reg.date}</td>
                 <td className='py-4'>
                   <NonconformityProgress
