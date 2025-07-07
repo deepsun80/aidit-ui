@@ -122,27 +122,6 @@ export default function AuditManagement({
     setShowCancel(false);
     cancelRequestedRef.current = false;
   };
-  //     const res = await fetch('/api/query', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ query }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (data.answer && report) {
-  //       updateReport({
-  //         qaList: [
-  //           ...(report.qaList || []),
-  //           { question: data.question, answer: data.answer },
-  //         ],
-  //       });
-  //     }
-  //   } catch (error) {
-  //     showError(`Error with query: ${error}`);
-  //     console.error('Error with query:', error);
-  //   }
-  // };
 
   const processQuery = async (query: string) => {
     try {
@@ -303,7 +282,7 @@ export default function AuditManagement({
       <input
         type='file'
         ref={fileInputRef}
-        accept='.pdf'
+        accept='.xlsx'
         className='hidden'
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
       />
