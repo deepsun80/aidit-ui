@@ -9,6 +9,8 @@ type Regulation = {
   date: string;
   notFound: number;
   total: number;
+  regulations: string;
+  standards: string;
 };
 
 const allRegulations: Regulation[] = [
@@ -17,24 +19,33 @@ const allRegulations: Regulation[] = [
     date: '02/15/2025',
     notFound: 3,
     total: 10,
+    regulations:
+      '21 CFR 820.20(a), 21 CFR 820.20(c), 21 CFR 820.20(e), 21 CFR 820.40(b)',
+    standards: 'ISO 9001/13485 5.3, 4.2.1, 4.2.2, 5.5.3',
   },
   {
-    name: 'QSMR',
+    name: 'Purchasing Controls',
     date: '02/15/2025',
     notFound: 8,
     total: 15,
+    regulations: '21 CFR 820.50, 21 CFR 820.100, 21 CFR 820.80',
+    standards: 'ISO 9001/13485 7.4.1, 7.4.2, 7.4.3',
   },
   {
     name: 'Training',
     date: '02/15/2025',
     notFound: 5,
     total: 18,
+    regulations: '21 CFR 820.25(e), 21 CFR 820.25(b)',
+    standards: 'ISO 9001/13485 6.2.2',
   },
   {
     name: 'Document Controls',
     date: '02/15/2025',
     notFound: 2,
     total: 10,
+    regulations: '21 CFR 820.40',
+    standards: 'ISO 9001/13485 4.2.3, ',
   },
 ];
 
@@ -83,19 +94,28 @@ export default function RegulationList({
 
       {/* Table */}
       <div className='bg-white rounded-sm shadow-md border border-gray-200 p-6'>
-        <table className='min-w-full text-sm text-left text-gray-800'>
+        <table className='min-w-full text-sm text-left text-gray-800 table-fixed'>
           <thead className='border-b border-gray-300'>
             <tr>
-              <th className='py-2 pr-4 font-semibold'>Process</th>
-              <th className='py-2 pr-4 font-semibold'>Regulations</th>
-              <th className='py-2 pr-4 font-semibold'>Last Audit Date</th>
-              <th className='py-2 font-semibold'>Nonconformities</th>
+              <th className='py-2 px-2 w-1/4 font-semibold break-words'>
+                Process
+              </th>
+              <th className='py-2 px-2 w-1/4 font-semibold break-words'>
+                Regulations
+              </th>
+              <th className='py-2 px-2 w-1/4 font-semibold break-words'>
+                Standards
+              </th>
+              <th className='py-2 px-2 w-1/4 font-semibold break-words'>
+                Last Audit Date
+              </th>
+              <th className='py-2 px-2 font-semibold'>Nonconformities</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((reg, idx) => (
               <tr key={idx} className='border-b border-gray-100'>
-                <td className='py-4 pr-4'>
+                <td className='py-4 px-2 break-words'>
                   <a
                     href='#'
                     onClick={(e) => {
@@ -109,8 +129,9 @@ export default function RegulationList({
                     {reg.name}
                   </a>
                 </td>
-                <td className='py-4 pr-4'>21 CFR 820, ISO 9001, ISO 13485</td>
-                <td className='py-4 pr-4'>{reg.date}</td>
+                <td className='py-4 px-2 break-words'>{reg.regulations}</td>
+                <td className='py-4 px-2 break-words'>{reg.standards}</td>
+                <td className='py-4 px-2 break-words'>{reg.date}</td>
                 <td className='py-4'>
                   <NonconformityProgress
                     notFoundCount={reg.notFound}
