@@ -5,7 +5,7 @@ import RegulationList from '@/components/InternalAudit/RegulationList';
 import RegulationAssessmentView from '@/components/InternalAudit/RegulationAssessmentView';
 import RunInternalAssessment from '@/components/InternalAudit/RunInternalAssessment';
 import QACards from '@/components/common/QACards';
-import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
+import NonconformityReport from '@/components/CustomerAudit/NonconformityReport';
 import { QA } from '@/types/qa';
 
 type Regulation = {

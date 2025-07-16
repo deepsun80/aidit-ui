@@ -100,7 +100,7 @@ export default function QACards({
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4'>
       {/* Header Section */}
-      <div className='flex justify-between items-center mb-4'>
+      <div className='flex justify-between mb-4'>
         <div>
           <p className='text-lg font-semibold text-gray-900'>
             Audit ID: {report.auditId}

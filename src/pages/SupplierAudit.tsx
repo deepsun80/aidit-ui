@@ -5,7 +5,7 @@ import SupplierList from '@/components/SupplierAudit/SupplierList';
 import SupplierAssessmentView from '@/components/SupplierAudit/SupplierAssessmentView';
 import RunSupplierAssessment from '@/components/SupplierAudit/RunSupplierAssessment';
 import QACards from '@/components/common/QACards';
-import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
+import NonconformityReport from '@/components/CustomerAudit/NonconformityReport';
 import { QA } from '@/types/qa';
 
 type Supplier = {

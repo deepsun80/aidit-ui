@@ -2,8 +2,15 @@
 'use client';
 
 import { useState } from 'react';
+import { CaretLeftIcon } from '@radix-ui/react-icons';
 
-export default function CreateReport({ setReport }: { setReport: any }) {
+export default function CreateReport({
+  setReport,
+  onBack,
+}: {
+  setReport: any;
+  onBack: () => void;
+}) {
   const [customer, setCustomer] = useState('');
   const [date, setDate] = useState('');
 
@@ -32,9 +39,17 @@ export default function CreateReport({ setReport }: { setReport: any }) {
 
   return (
     <div className='max-w-xl mx-auto'>
-      <h2 className='text-2xl font-semibold mb-6 text-gray-900'>
-        Create Audit
-      </h2>
+      <div className='flex justify-between items-start mb-6'>
+        <h2 className='text-2xl font-semibold text-gray-900'>Create Audit</h2>
+        <button
+          onClick={onBack}
+          className='w-9 h-9 rounded-full bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center'
+          title='Back'
+        >
+          <CaretLeftIcon className='w-5 h-5' />
+        </button>
+      </div>
+
       <div className='bg-white shadow-md p-6 rounded border border-gray-300'>
         {/* Requesting Entity */}
         <label className='block mb-2 text-sm font-medium text-gray-700'>

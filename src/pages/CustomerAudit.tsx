@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import ChatPrompt from '@/components/AuditManagement/ChatPrompt';
+import ChatPrompt from '@/components/CustomerAudit/ChatPrompt';
 import QuestionSelector from '@/components/common/QuestionSelector';
 import QACards from '@/components/common/QACards';
-import NonconformityReport from '@/components/AuditManagement/NonconformityReport';
-import WelcomeScreen from '@/components/AuditManagement/WelcomeScreen';
-import CreateReport from '@/components/AuditManagement/CreateReport';
+import NonconformityReport from '@/components/CustomerAudit/NonconformityReport';
+import WelcomeScreen from '@/components/CustomerAudit/WelcomeScreen';
+import CreateReport from '@/components/CustomerAudit/CreateReport';
+import CustomerList from '@/components/CustomerAudit/CustomerList';
 import type { QAReport } from '@/types/qa';
 import { handleDownloadPDF } from '@lib/downloadPDF';
 
-interface AuditManagementProps {
+interface CustomerAuditProps {
   report: QAReport | null;
   setReport: (report: QAReport | null) => void;
   updateReport: (partial: Partial<QAReport>) => void;
@@ -18,14 +19,15 @@ interface AuditManagementProps {
   showError: (message: string) => void;
 }
 
-export default function AuditManagement({
+export default function CustomerAudit({
   report,
   setReport,
   updateReport,
   deleteQuestions,
   showError,
-}: AuditManagementProps) {
-  const [hasMounted, setHasMounted] = useState(false); // For Next.js hydration mismatch or flicker fix
+}: CustomerAuditProps) {
+  const [view, setView] = useState<'list' | 'active'>('list');
+  const [hasMounted, setHasMounted] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -237,6 +239,16 @@ export default function AuditManagement({
     );
   }
 
+  if (view === 'list') {
+    return <CustomerList onStartNewAssessment={() => setView('active')} />;
+  }
+
+  if (!report && view === 'active') {
+    return (
+      <CreateReport setReport={setReport} onBack={() => setView('list')} />
+    );
+  }
+
   return (
     <>
       {(loading || uploading) && (
@@ -287,9 +299,7 @@ export default function AuditManagement({
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
       />
 
-      {!report ? (
-        <CreateReport setReport={setReport} />
-      ) : showQuestionSelector && questions ? (
+      {showQuestionSelector && questions ? (
         <QuestionSelector
           selectedFile={selectedFile?.name}
           questions={questions}

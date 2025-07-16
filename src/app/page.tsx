@@ -6,7 +6,7 @@ import Sidebar from '@/components/common/SideBar';
 import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
 import InternalAudit from '@/pages/InternalAudit';
-import AuditManagement from '@/pages/AuditManagement';
+import CustomerAudit from '@/pages/CustomerAudit';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 import GlobalError from '@/components/common/GlobalError';
@@ -99,7 +99,7 @@ export default function Home() {
         <main className='flex-1 p-8'>
           {activePage === 'dashboard' && <Dashboard />}
           {activePage === 'audit' && (
-            <AuditManagement
+            <CustomerAudit
               report={report}
               setReport={setReport}
               updateReport={updateReport}
