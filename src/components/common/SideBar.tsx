@@ -8,6 +8,7 @@ import {
   CaretUpIcon,
   CaretDownIcon,
   CardStackIcon,
+  ReaderIcon,
 } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -17,9 +18,9 @@ export default function Sidebar({
   activePage,
 }: {
   setActivePage: (
-    page: 'dashboard' | 'audit' | 'supplier' | 'internal'
+    page: 'dashboard' | 'audit' | 'supplier' | 'internal' | 'records'
   ) => void;
-  activePage: 'dashboard' | 'audit' | 'supplier' | 'internal';
+  activePage: 'dashboard' | 'audit' | 'supplier' | 'internal' | 'records';
 }) {
   const [showAuditSubmenu, setShowAuditSubmenu] = useState(true);
 
@@ -116,6 +117,23 @@ export default function Sidebar({
             </div>
           )}
         </div>
+
+        {/* Record Management */}
+        <button
+          onClick={() => setActivePage('records')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
+            activePage === 'records'
+              ? 'bg-gray-800 text-white'
+              : 'text-gray-300 hover:text-white'
+          }`}
+        >
+          <ReaderIcon
+            className={`w-6 h-6 ${
+              activePage === 'records' ? 'text-blue-300' : 'text-inherit'
+            }`}
+          />
+          <span>Record Management</span>
+        </button>
       </nav>
     </aside>
   );

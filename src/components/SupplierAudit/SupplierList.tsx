@@ -110,8 +110,8 @@ export default function SupplierList({
                             supplier.risk === 'low'
                               ? '30%'
                               : supplier.risk === 'medium'
-                                ? '60%'
-                                : '90%',
+                              ? '60%'
+                              : '90%',
                           backgroundColor: getBarColor(supplier.risk),
                         }}
                       />

@@ -70,7 +70,12 @@ export default function CustomerAudit({
       return;
     }
 
-    await processQuery(input);
+    const answer = await processQuery(input);
+
+    updateReport({
+      qaList: [...(report?.qaList || []), { question: input, answer }],
+    });
+
     setShowChat(false);
     setLoading(false);
   };
@@ -82,7 +87,11 @@ export default function CustomerAudit({
     setSubmissionProgress(0);
     cancelRequestedRef.current = false;
 
-    let currentQaList = [...qaList];
+    const existingQuestions = new Set(
+      (report.qaList || []).map((qa) => qa.question.trim())
+    );
+
+    const updatedQaList = [...report.qaList];
 
     for (let i = 0; i < selectedQuestions.length; i++) {
       if (cancelRequestedRef.current) {
@@ -90,33 +99,25 @@ export default function CustomerAudit({
         break;
       }
 
-      const question = selectedQuestions[i];
-      const exists = currentQaList.some(
-        (qa) => qa.question.trim() === question.trim()
-      );
-
-      if (exists) {
+      const question = selectedQuestions[i].trim();
+      if (existingQuestions.has(question)) {
         console.log(`Skipping duplicate question: ${question}`);
+        setSubmissionProgress(i + 1);
         continue;
       }
 
-      const res = await fetch('/api/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: question }),
-      });
+      setSubmissionProgress(i + 1);
 
-      const data = await res.json();
+      const answer = await processQuery(question);
 
-      if (data.answer) {
-        const newQa = { question: data.question, answer: data.answer };
-        currentQaList = [...currentQaList, newQa];
-        updateReport({ qaList: currentQaList });
+      if (answer) {
+        updatedQaList.push({ question, answer });
       }
 
-      setSubmissionProgress(i + 1);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+
+    updateReport({ qaList: updatedQaList });
 
     setSubmissionProgress(null);
     setLoading(false);
@@ -125,7 +126,7 @@ export default function CustomerAudit({
     cancelRequestedRef.current = false;
   };
 
-  const processQuery = async (query: string) => {
+  const processQuery = async (query: string): Promise<string> => {
     try {
       const res = await fetch('/api/stream', {
         method: 'POST',
@@ -145,13 +146,11 @@ export default function CustomerAudit({
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
 
-        // 🛠️ Detect tool usage metadata
         if (chunk.includes('[ToolCall]')) {
           const match = chunk.match(/\[ToolCall\] (.+)/);
           if (match) {
             try {
               const { tool, agent } = JSON.parse(match[1]);
-              console.log(`🛠️ Agent: ${agent} → Tool: ${tool}`);
               setActiveAgent(agent);
               setActiveTool(tool);
             } catch (err) {
@@ -161,24 +160,18 @@ export default function CustomerAudit({
           continue;
         }
 
-        // ✅ Smart formatting: inject newline before Citation: if missing
         const formattedChunk = chunk.replace(/(?<!\n)(Citation: )/g, '\n$1');
-
         fullText += formattedChunk;
       }
 
-      updateReport({
-        qaList: [
-          ...(report?.qaList || []),
-          { question: query, answer: fullText },
-        ],
-      });
-
       setActiveAgent(null);
       setActiveTool(null);
+
+      return fullText;
     } catch (error) {
       showError(`Streaming error: ${error}`);
       console.error('Streaming error:', error);
+      return '';
     }
   };
 
@@ -260,17 +253,27 @@ export default function CustomerAudit({
             ) : uploading ? (
               `Processing ${selectedFile?.name ?? 'file'}...`
             ) : submissionProgress !== null ? (
-              `Processing ${submissionProgress} / ${selectedQuestions.length}...`
-            ) : activeAgent && activeTool ? (
               <>
-                <span>Processing...</span>
+                <span>
+                  Processing {submissionProgress} / {selectedQuestions.length}
+                  ...
+                </span>
                 {activeAgent && activeTool && (
-                  <span className='mt-1 text-sm text-gray-600 flex items-center gap-2'>
+                  <span className='mt-1 text-sm text-gray-600 flex items-center justify-center gap-2'>
                     <span>🤖 {activeAgent}</span>
                     <span className='text-gray-400'>→</span>
                     <span>🛠️ {activeTool}</span>
                   </span>
                 )}
+              </>
+            ) : activeAgent && activeTool ? (
+              <>
+                <span>Processing...</span>
+                <span className='mt-1 text-sm text-gray-600 flex items-center justify-center gap-2'>
+                  <span>🤖 {activeAgent}</span>
+                  <span className='text-gray-400'>→</span>
+                  <span>🛠️ {activeTool}</span>
+                </span>
               </>
             ) : (
               'Processing...'
