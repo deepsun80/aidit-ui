@@ -1,14 +1,13 @@
 'use client';
 
 import {
-  DashboardIcon,
   FileTextIcon,
   ArchiveIcon,
   LayersIcon,
   CaretUpIcon,
   CaretDownIcon,
   CardStackIcon,
-  ReaderIcon,
+  MixIcon, // 👈 better ERP icon
 } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -17,12 +16,10 @@ export default function Sidebar({
   setActivePage,
   activePage,
 }: {
-  setActivePage: (
-    page: 'dashboard' | 'audit' | 'supplier' | 'internal' | 'records'
-  ) => void;
-  activePage: 'dashboard' | 'audit' | 'supplier' | 'internal' | 'records';
+  setActivePage: (page: 'audit' | 'supplier' | 'internal' | 'erp') => void;
+  activePage: 'audit' | 'supplier' | 'internal' | 'erp';
 }) {
-  const [showAuditSubmenu, setShowAuditSubmenu] = useState(true);
+  const [showQmsSubmenu, setShowQmsSubmenu] = useState(true);
 
   return (
     <aside className='w-70 bg-gray-600 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
@@ -33,41 +30,24 @@ export default function Sidebar({
 
       {/* Nav Items */}
       <nav className='flex flex-col gap-6 text-md w-full px-6'>
-        {/* Dashboard */}
-        <button
-          onClick={() => setActivePage('dashboard')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
-            activePage === 'dashboard'
-              ? 'bg-gray-800 text-white'
-              : 'text-gray-300 hover:text-white'
-          }`}
-        >
-          <DashboardIcon
-            className={`w-6 h-6 ${
-              activePage === 'dashboard' ? 'text-blue-300' : 'text-inherit'
-            }`}
-          />
-          <span>Dashboard</span>
-        </button>
-
-        {/* Audit Management Section */}
+        {/* QMS Section */}
         <div>
           <button
-            onClick={() => setShowAuditSubmenu(!showAuditSubmenu)}
+            onClick={() => setShowQmsSubmenu(!showQmsSubmenu)}
             className='flex items-center justify-between px-4 py-2 rounded-sm transition w-full text-gray-100 hover:text-white'
           >
             <div className='flex gap-2 items-center'>
               <CardStackIcon className='w-6 h-6 text-inherit' />
-              <span>Audit Management</span>
+              <span>QMS</span>
             </div>
-            {showAuditSubmenu ? (
+            {showQmsSubmenu ? (
               <CaretUpIcon className='w-4 h-4 text-inherit' />
             ) : (
               <CaretDownIcon className='w-4 h-4 text-inherit' />
             )}
           </button>
 
-          {showAuditSubmenu && (
+          {showQmsSubmenu && (
             <div className='ml-8 mt-4 flex flex-col gap-4'>
               <button
                 onClick={() => setActivePage('audit')}
@@ -118,21 +98,21 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Record Management */}
+        {/* ERP Section */}
         <button
-          onClick={() => setActivePage('records')}
+          onClick={() => setActivePage('erp')}
           className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
-            activePage === 'records'
+            activePage === 'erp'
               ? 'bg-gray-800 text-white'
               : 'text-gray-300 hover:text-white'
           }`}
         >
-          <ReaderIcon
+          <MixIcon
             className={`w-6 h-6 ${
-              activePage === 'records' ? 'text-blue-300' : 'text-inherit'
+              activePage === 'erp' ? 'text-blue-300' : 'text-inherit'
             }`}
           />
-          <span>Record Management</span>
+          <span>ERP</span>
         </button>
       </nav>
     </aside>

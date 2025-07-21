@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/common/Header';
 import Sidebar from '@/components/common/SideBar';
-import Dashboard from '@/pages/Dashboard';
+// import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
 import InternalAudit from '@/pages/InternalAudit';
 import CustomerAudit from '@/pages/CustomerAudit';
-import RecordManagement from '@/pages/RecordManagement';
+// import RecordManagement from '@/pages/RecordManagement';
+import ERP from '@/pages/ERP';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 import GlobalError from '@/components/common/GlobalError';
@@ -16,8 +17,8 @@ import type { QAReport } from '@/types/qa';
 export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
-    'dashboard' | 'audit' | 'supplier' | 'internal' | 'records'
-  >('records');
+    'audit' | 'supplier' | 'internal' | 'erp'
+  >('erp');
 
   // === Report state ===
   const [report, setReport] = useState<QAReport | null>(null);
@@ -98,7 +99,7 @@ export default function Home() {
       <div className='flex flex-col flex-1'>
         <Header />
         <main className='flex-1 p-8'>
-          {activePage === 'dashboard' && <Dashboard />}
+          {/* {activePage === 'dashboard' && <Dashboard />} */}
           {activePage === 'audit' && (
             <CustomerAudit
               report={report}
@@ -110,7 +111,8 @@ export default function Home() {
           )}
           {activePage === 'supplier' && <SupplierAudit />}
           {activePage === 'internal' && <InternalAudit />}
-          {activePage === 'records' && <RecordManagement />}
+          {/* {activePage === 'records' && <RecordManagement />} */}
+          {activePage === 'erp' && <ERP />}
         </main>
         {error && <GlobalError error={error} clearError={clearError} />}
       </div>

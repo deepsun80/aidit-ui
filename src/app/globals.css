@@ -1,3 +1,5 @@
+@import '@xyflow/react/dist/style.css';
+/* @import '@xyflow/react/dist/theme-default.css'; */
 @import 'tailwindcss';
 
 :root {
