@@ -17,7 +17,7 @@ import {
   Handle,
   Position,
 } from '@xyflow/react';
-import { CheckIcon } from '@radix-ui/react-icons';
+import { CheckCircledIcon } from '@radix-ui/react-icons';
 
 import '@xyflow/react/dist/style.css';
 
@@ -27,6 +27,8 @@ const SplitNode: React.FC<NodeProps> = ({ data }) => {
   const hasTopHandle = data.hasTopHandle as boolean;
   const hasBottomHandle = data.hasBottomHandle as boolean;
   const disabled = data.disabled as boolean;
+  const hasLeftHandle = data.hasLeftHandle as boolean;
+  const hasRightHandle = data.hasRightHandle as boolean;
 
   return (
     <div className='w-full h-full flex flex-col text-[8px] relative'>
@@ -38,20 +40,45 @@ const SplitNode: React.FC<NodeProps> = ({ data }) => {
           style={{
             background: '#fff',
             borderColor: '#1a192b',
-            height: 6,
-            width: 6,
+            height: 7,
+            width: 7,
           }}
         />
       )}
+
       {hasBottomHandle && (
         <Handle
           type='source'
+          id='bottom'
           position={Position.Bottom}
           style={{
-            top: '32px',
-            borderColor: '#1a192b',
-            height: 2,
-            width: 2,
+            top: '30px',
+            height: 7,
+            width: 7,
+          }}
+        />
+      )}
+
+      {hasLeftHandle && (
+        <Handle
+          type='target'
+          position={Position.Left}
+          style={{
+            height: 7,
+            width: 7,
+          }}
+        />
+      )}
+
+      {hasRightHandle && (
+        <Handle
+          type='source'
+          id='right'
+          position={Position.Right}
+          style={{
+            background: '#1a192b',
+            height: 7,
+            width: 7,
           }}
         />
       )}
@@ -66,8 +93,10 @@ const SplitNode: React.FC<NodeProps> = ({ data }) => {
       </div>
       {/* Body */}
       <div
-        className={`flex-1 border-t border-gray-300 rounded-b-sm flex items-center justify-between px-2 py-1 ${
-          disabled ? 'bg-gray-100' : 'bg-white'
+        className={`flex-1  rounded-b-sm flex items-center justify-between px-2 py-1 ${
+          disabled
+            ? 'bg-gray-100 border border-gray-300'
+            : 'bg-white border border-gray-800'
         }`}
       >
         <div
@@ -75,7 +104,7 @@ const SplitNode: React.FC<NodeProps> = ({ data }) => {
             disabled ? 'bg-gray-300' : 'bg-green-500'
           } rounded`}
         />
-        <CheckIcon
+        <CheckCircledIcon
           className={`w-3 h-3 ${disabled ? 'text-gray-300' : 'text-green-500'}`}
         />
       </div>
@@ -127,6 +156,7 @@ const initialNodes: Node[] = [
       label: 'Make',
       hasTopHandle: true,
       hasBottomHandle: true,
+      hasRightHandle: true,
       disabled: false,
     },
     style: { width: 90, height: 30 },
@@ -137,6 +167,44 @@ const initialNodes: Node[] = [
     position: { x: 0, y: 410 },
     type: 'splitNode',
     data: { label: 'Delivery', hasTopHandle: true, disabled: true },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'cpq',
+    position: { x: 150, y: 320 },
+    type: 'splitNode',
+    data: {
+      label: 'CPQ',
+      hasLeftHandle: true,
+      hasRightHandle: true, // enable chaining
+      disabled: false,
+    },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'product',
+    position: { x: 300, y: 320 },
+    type: 'splitNode',
+    data: {
+      label: 'Product Creation',
+      hasLeftHandle: true,
+      hasBottomHandle: true, // edge to Batch
+      disabled: false,
+    },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'batch',
+    position: { x: 300, y: 410 },
+    type: 'splitNode',
+    data: {
+      label: 'Batch Records',
+      hasTopHandle: true, // connects from Product
+      disabled: false,
+    },
     style: { width: 90, height: 30 },
     draggable: false,
   },
@@ -168,8 +236,28 @@ const initialEdges: Edge[] = [
     id: 'e4',
     source: 'make',
     target: 'delivery',
+    sourceHandle: 'bottom',
     type: 'default',
     animated: false,
+  },
+  {
+    id: 'e5',
+    source: 'make',
+    target: 'cpq',
+    sourceHandle: 'right',
+    type: 'default',
+  },
+  {
+    id: 'e6',
+    source: 'cpq',
+    target: 'product',
+    type: 'default',
+  },
+  {
+    id: 'e7',
+    source: 'product',
+    target: 'batch',
+    type: 'default',
   },
 ];
 
