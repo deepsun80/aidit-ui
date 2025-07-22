@@ -28,3 +28,10 @@ button,
 a {
   cursor: pointer;
 }
+
+@layer utilities {
+  .animate-slide-in {
+    @apply transition-transform duration-200 ease-out;
+    transform: translateX(0);
+  }
+}

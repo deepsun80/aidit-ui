@@ -9,8 +9,6 @@ import {
   Edge,
   Node,
   useNodesState,
-  useEdgesState,
-  addEdge,
   ConnectionLineType,
   NodeProps,
   Handle,
@@ -292,12 +290,14 @@ const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
   });
 };
 
-export default function WorkflowCanvas() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+export default function WorkflowCanvas({
+  setselectedNode,
+}: {
+  setselectedNode: (id: string | null) => void;
+}) {
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
 
-  const [completionByNodeId, setCompletionByNodeId] = useState<
-    Record<string, number>
-  >({
+  const [completionByNodeId] = useState<Record<string, number>>({
     cpq: 10,
     batch: 100,
   });
@@ -345,6 +345,15 @@ export default function WorkflowCanvas() {
     splitNode: SplitNode,
   };
 
+  const handleNodeClick = useCallback(
+    (_: React.MouseEvent, node: Node) => {
+      if (!node.data?.disabled && node.data?.clickable) {
+        setselectedNode(node.data.label as string);
+      }
+    },
+    [setselectedNode]
+  );
+
   return (
     <ReactFlow
       nodes={enrichedNodes}
@@ -357,6 +366,7 @@ export default function WorkflowCanvas() {
       zoomOnScroll
       nodesDraggable={false}
       connectionLineType={ConnectionLineType.Straight}
+      onNodeClick={handleNodeClick}
     >
       <Background
         variant={BackgroundVariant.Dots}
