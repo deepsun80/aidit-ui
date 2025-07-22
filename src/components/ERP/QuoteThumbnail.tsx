@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   EyeOpenIcon,
   Pencil1Icon,
@@ -9,16 +8,25 @@ import {
 } from '@radix-ui/react-icons';
 
 interface QuoteThumbnailProps {
+  project: ProjectProps;
   selectedNode: string;
-  customer: string;
+  quoteConfirmed: boolean;
+  setQuoteConfirmed: (val: boolean) => void;
 }
 
-export default function QuoteThumbnail({
-  selectedNode,
-  customer,
-}: QuoteThumbnailProps) {
-  const [quoteConfirmed, setQuoteConfirmed] = useState(false);
+type ProjectProps = {
+  id: string;
+  projectName: string;
+  customer: string;
+  address: string;
+};
 
+export default function QuoteThumbnail({
+  project,
+  selectedNode,
+  quoteConfirmed,
+  setQuoteConfirmed,
+}: QuoteThumbnailProps) {
   return (
     <>
       <div className='mt-8 border border-gray-300 rounded-md p-4 bg-gray-50 relative'>
@@ -42,7 +50,7 @@ export default function QuoteThumbnail({
             <span className='font-semibold'>Project:</span> {selectedNode}
           </div>
           <div>
-            <span className='font-semibold'>Customer:</span> {customer}
+            <span className='font-semibold'>Customer:</span> {project.customer}
           </div>
           <div className='mt-2'>
             <span className='font-semibold'>Scope:</span> Manufacturing of
@@ -65,6 +73,7 @@ export default function QuoteThumbnail({
           </div>
         </div>
       </div>
+
       {/* Confirm Button */}
       {!quoteConfirmed ? (
         <button

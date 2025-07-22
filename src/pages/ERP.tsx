@@ -37,6 +37,18 @@ export default function ERP() {
   const [selectedProjectId, setSelectedProjectId] = useState('proj1');
   const [selectedNode, setselectedNode] = useState<string | null>(null);
 
+  const [quoteStarted, setQuoteStarted] = useState(false);
+  const [quoteCompleted, setQuoteCompleted] = useState(false);
+  const [quoteConfirmed, setQuoteConfirmed] = useState(false);
+
+  const cpqProgress = quoteConfirmed
+    ? 100
+    : quoteCompleted
+    ? 50
+    : quoteStarted
+    ? 10
+    : 0;
+
   const selectedProject = sampleProjects.find(
     (p) => p.id === selectedProjectId
   )!;
@@ -48,7 +60,7 @@ export default function ERP() {
           <h1 className='text-xl font-extrabold'>
             {selectedProject.projectName}
           </h1>
-          <div className='text-md font-semibold text-gray-700'>
+          <div className='text-md font-semibold text-orange-600'>
             {selectedProject.customer}
           </div>
           <div className='text-xs text-gray-600'>{selectedProject.address}</div>
@@ -69,14 +81,26 @@ export default function ERP() {
       </div>
 
       <div className='w-full h-[80vh] border border-gray-300 rounded-b shadow bg-white'>
-        <WorkflowCanvas setselectedNode={setselectedNode} />
+        <WorkflowCanvas
+          setSelectedNode={setselectedNode}
+          progressByNodeId={{
+            cpq: cpqProgress,
+            batch: 100,
+          }}
+        />
       </div>
 
       {selectedNode && (
         <RightSidebar
           selectedNode={selectedNode}
-          customer={selectedProject.customer}
+          project={selectedProject}
           onClose={() => setselectedNode(null)}
+          quoteStarted={quoteStarted}
+          setQuoteStarted={setQuoteStarted}
+          quoteCompleted={quoteCompleted}
+          setQuoteCompleted={setQuoteCompleted}
+          quoteConfirmed={quoteConfirmed}
+          setQuoteConfirmed={setQuoteConfirmed}
         />
       )}
     </div>

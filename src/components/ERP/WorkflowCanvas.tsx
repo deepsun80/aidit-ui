@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   ReactFlow,
   Background,
@@ -283,31 +283,30 @@ const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
       type: 'default',
       animated: shouldAnimate,
       style: {
-        stroke: isDisabled ? '#d1d5db' : '#1a192b',
+        stroke: isDisabled ? '#d1d5db' : shouldAnimate ? '#66bfff' : '#1a192b',
         pointerEvents: 'none',
       },
     };
   });
 };
 
-export default function WorkflowCanvas({
-  setselectedNode,
-}: {
-  setselectedNode: (id: string | null) => void;
-}) {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+type WorkflowCanvasProps = {
+  setSelectedNode: (node: string | null) => void;
+  progressByNodeId: Record<string, number>;
+};
 
-  const [completionByNodeId] = useState<Record<string, number>>({
-    cpq: 10,
-    batch: 100,
-  });
+export default function WorkflowCanvas({
+  setSelectedNode,
+  progressByNodeId,
+}: WorkflowCanvasProps) {
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
 
   // Recursive progress computation
   const computeProgress = useCallback(
     (id: string): number => {
       const children = childMap[id];
       if (!children || children.length === 0) {
-        return completionByNodeId[id] ?? 0;
+        return progressByNodeId[id] ?? 0;
       }
       const total = children.length;
       const completed = children.filter(
@@ -315,7 +314,7 @@ export default function WorkflowCanvas({
       ).length;
       return Math.round((completed / total) * 100);
     },
-    [completionByNodeId]
+    [progressByNodeId]
   );
 
   // Enrich node data with computed progress
@@ -348,10 +347,10 @@ export default function WorkflowCanvas({
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
       if (!node.data?.disabled && node.data?.clickable) {
-        setselectedNode(node.data.label as string);
+        setSelectedNode(node.data.label as string);
       }
     },
-    [setselectedNode]
+    [setSelectedNode]
   );
 
   return (

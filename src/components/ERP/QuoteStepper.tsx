@@ -46,7 +46,7 @@ export default function QuoteStepper({ onComplete }: QuoteStepperProps) {
             {step.complete ? (
               <CheckCircledIcon className='text-green-500 w-5 h-5' />
             ) : (
-              <ReloadIcon className='animate-spin text-gray-500 w-5 h-5' />
+              <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
             )}
           </div>
           <span>{step.title}</span>
