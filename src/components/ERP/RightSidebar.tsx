@@ -1,3 +1,12 @@
+/**
+ * 🪟 RightSidebar
+ *
+ * Dynamic sidebar that appears in the ERP interface when a node is selected.
+ * Displays relevant workflows like CPQ or Batch Records, including steppers,
+ * thumbnails, buttons, and analytics placeholders. Designed to adapt based on
+ * the selected node label (e.g., "CPQ", "Batch Records").
+ */
+
 'use client';
 
 import { Cross1Icon } from '@radix-ui/react-icons';

@@ -1,3 +1,11 @@
+/**
+ * 📋 QuoteThumbnail
+ *
+ * Renders a summarized preview of a quote table, including line items, unit costs,
+ * quantities, and totals. Shown in the ERP sidebar after quote generation, with
+ * an option to confirm or edit.
+ */
+
 'use client';
 
 import {

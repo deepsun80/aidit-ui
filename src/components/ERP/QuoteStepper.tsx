@@ -1,3 +1,11 @@
+/**
+ * 🧮 QuoteStepper
+ *
+ * Visual progress component showing the CPQ (Configure, Price, Quote) flow steps:
+ * configuration, calculation, and approval. Indicates progress and completion
+ * status of each stage during quote generation.
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';

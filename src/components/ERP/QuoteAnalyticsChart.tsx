@@ -1,4 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * 📊 QuoteAnalyticsChart
+ *
+ * (Placeholder) Component intended to display visual analytics for quote-related data
+ * such as price trends, margins, or component breakdowns. Used inside the ERP sidebar
+ * beneath the quote stepper.
+ */
+
 'use client';
 
 import { Bar } from 'react-chartjs-2';

@@ -1,3 +1,11 @@
+/**
+ * 📄 BatchRecordThumbnail
+ *
+ * Displays a preview of a generated batch record in table form, including key fields
+ * such as product, batch number, and status. Embedded inside the ERP sidebar for
+ * quick review before confirmation.
+ */
+
 'use client';
 
 import {

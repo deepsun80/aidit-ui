@@ -1,3 +1,11 @@
+/**
+ * ⏱ BatchRecordStepper
+ *
+ * Renders a multi-step progress UI for the batch records workflow inside the ERP system.
+ * Displays individual steps such as draft, review, and approval, using visual cues
+ * and completion status to guide the user.
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';
