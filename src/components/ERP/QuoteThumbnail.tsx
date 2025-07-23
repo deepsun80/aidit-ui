@@ -9,7 +9,6 @@ import {
 
 interface QuoteThumbnailProps {
   project: ProjectProps;
-  selectedNode: string;
   quoteConfirmed: boolean;
   setQuoteConfirmed: (val: boolean) => void;
 }
@@ -23,7 +22,6 @@ type ProjectProps = {
 
 export default function QuoteThumbnail({
   project,
-  selectedNode,
   quoteConfirmed,
   setQuoteConfirmed,
 }: QuoteThumbnailProps) {
@@ -47,7 +45,8 @@ export default function QuoteThumbnail({
         <div className='text-xs text-gray-800 leading-snug'>
           <div className='text-sm font-bold mb-2'>Manufacturing Quote</div>
           <div>
-            <span className='font-semibold'>Project:</span> {selectedNode}
+            <span className='font-semibold'>Project:</span>{' '}
+            {project.projectName}
           </div>
           <div>
             <span className='font-semibold'>Customer:</span> {project.customer}

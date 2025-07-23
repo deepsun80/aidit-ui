@@ -6,10 +6,9 @@ import dynamic from 'next/dynamic';
 // Dynamically import to avoid SSR issues
 const WorkflowCanvas = dynamic(
   () => import('@/components/ERP/WorkflowCanvas'),
-  {
-    ssr: false,
-  }
+  { ssr: false }
 );
+
 import RightSidebar from '@/components/ERP/RightSidebar';
 
 const sampleProjects = [
@@ -35,17 +34,31 @@ const sampleProjects = [
 
 export default function ERP() {
   const [selectedProjectId, setSelectedProjectId] = useState('proj1');
-  const [selectedNode, setselectedNode] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
+  // CPQ Workflow State
   const [quoteStarted, setQuoteStarted] = useState(false);
   const [quoteCompleted, setQuoteCompleted] = useState(false);
   const [quoteConfirmed, setQuoteConfirmed] = useState(false);
+
+  // Batch Records Workflow State
+  const [brStarted, setBrStarted] = useState(false);
+  const [brCompleted, setBrCompleted] = useState(false);
+  const [brConfirmed, setBrConfirmed] = useState(false);
 
   const cpqProgress = quoteConfirmed
     ? 100
     : quoteCompleted
     ? 50
     : quoteStarted
+    ? 10
+    : 0;
+
+  const batchProgress = brConfirmed
+    ? 100
+    : brCompleted
+    ? 50
+    : brStarted
     ? 10
     : 0;
 
@@ -82,10 +95,10 @@ export default function ERP() {
 
       <div className='w-full h-[80vh] border border-gray-300 rounded-b shadow bg-white'>
         <WorkflowCanvas
-          setSelectedNode={setselectedNode}
+          setSelectedNode={setSelectedNode}
           progressByNodeId={{
             cpq: cpqProgress,
-            batch: 100,
+            batch: batchProgress,
           }}
         />
       </div>
@@ -94,13 +107,21 @@ export default function ERP() {
         <RightSidebar
           selectedNode={selectedNode}
           project={selectedProject}
-          onClose={() => setselectedNode(null)}
+          onClose={() => setSelectedNode(null)}
+          // CPQ props
           quoteStarted={quoteStarted}
           setQuoteStarted={setQuoteStarted}
           quoteCompleted={quoteCompleted}
           setQuoteCompleted={setQuoteCompleted}
           quoteConfirmed={quoteConfirmed}
           setQuoteConfirmed={setQuoteConfirmed}
+          // Batch Record props
+          brStarted={brStarted}
+          setBrStarted={setBrStarted}
+          brCompleted={brCompleted}
+          setBrCompleted={setBrCompleted}
+          brConfirmed={brConfirmed}
+          setBrConfirmed={setBrConfirmed}
         />
       )}
     </div>

@@ -283,7 +283,7 @@ const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
       type: 'default',
       animated: shouldAnimate,
       style: {
-        stroke: isDisabled ? '#d1d5db' : shouldAnimate ? '#66bfff' : '#1a192b',
+        stroke: isDisabled ? '#d1d5db' : shouldAnimate ? '#78b3de' : '#1a192b',
         pointerEvents: 'none',
       },
     };
