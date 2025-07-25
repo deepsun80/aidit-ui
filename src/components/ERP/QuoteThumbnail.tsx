@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 📋 QuoteThumbnail
  *
@@ -13,31 +14,46 @@ import {
   Pencil1Icon,
   DownloadIcon,
   CheckCircledIcon,
+  ReloadIcon,
 } from '@radix-ui/react-icons';
 
 interface QuoteThumbnailProps {
-  project: ProjectProps;
+  customer: string;
+  project: string;
+  product: string;
   quoteConfirmed: boolean;
   setQuoteConfirmed: (val: boolean) => void;
+  quoteSheetData: Record<string, any>;
+  onfetchQuote: () => void;
 }
 
-type ProjectProps = {
-  id: string;
-  projectName: string;
-  customer: string;
-  address: string;
-};
-
 export default function QuoteThumbnail({
+  customer,
   project,
+  product,
   quoteConfirmed,
   setQuoteConfirmed,
+  quoteSheetData,
+  onfetchQuote,
 }: QuoteThumbnailProps) {
+  const {
+    ['RFQ number']: rfqNumber,
+    Units,
+    Profit,
+    ['Selling Price']: sellingPrice,
+  } = quoteSheetData;
+
   return (
     <>
       <div className='mt-8 border border-gray-300 rounded-md p-4 bg-gray-50 relative'>
         {/* Top Action Buttons */}
         <div className='absolute top-2 right-2 flex gap-2'>
+          <button
+            onClick={onfetchQuote}
+            className='bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-700 text-gray-700 hover:text-white transition'
+          >
+            <ReloadIcon className='w-4 h-4' />
+          </button>
           <button className='bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-700 text-gray-700 hover:text-white transition'>
             <EyeOpenIcon className='w-4 h-4' />
           </button>
@@ -51,13 +67,18 @@ export default function QuoteThumbnail({
 
         {/* Quote Preview */}
         <div className='text-xs text-gray-800 leading-snug'>
-          <div className='text-sm font-bold mb-2'>Manufacturing Quote</div>
+          <div className='text-sm font-bold mb-2'>Quote Summary</div>
           <div>
-            <span className='font-semibold'>Project:</span>{' '}
-            {project.projectName}
+            <span className='font-semibold'>Customer:</span> {customer}
           </div>
           <div>
-            <span className='font-semibold'>Customer:</span> {project.customer}
+            <span className='font-semibold'>Project:</span> {project}
+          </div>
+          <div>
+            <span className='font-semibold'>Product:</span> {product}
+          </div>
+          <div className='mt-2'>
+            <span className='font-semibold'>RFQ Unit:</span> {rfqNumber}
           </div>
           <div className='mt-2'>
             <span className='font-semibold'>Scope:</span> Manufacturing of
@@ -69,14 +90,14 @@ export default function QuoteThumbnail({
             weeks
           </div>
           <div className='mt-1'>
-            <span className='font-semibold'>Unit Price:</span> $28.75 USD
+            <span className='font-semibold'>Unit Order Quantity:</span> {Units}
           </div>
           <div className='mt-1'>
-            <span className='font-semibold'>Minimum Order Quantity:</span> 500
+            <span className='font-semibold'>Total:</span> $
+            {sellingPrice.toFixed(2)} USD
           </div>
           <div className='mt-1'>
-            <span className='font-semibold'>Terms:</span> 50% upfront, 50% upon
-            delivery
+            <span className='font-semibold'>Profit:</span> {Profit * 100}%
           </div>
         </div>
       </div>

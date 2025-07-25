@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 🪟 RightSidebar
  *
@@ -9,22 +10,24 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { Cross1Icon } from '@radix-ui/react-icons';
-import QuoteStepper from './QuoteStepper';
 import QuoteThumbnail from './QuoteThumbnail';
 import QuoteAnalyticsChart from './QuoteAnalyticsChart';
 import BatchRecordStepper from './BatchRecordStepper';
 import BatchRecordThumbnail from './BatchRecordThumbnail';
+import { RFQFields } from '@/types/rfq';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 type RightSidebarProps = {
   selectedNode: string;
-  project: ProjectProps;
+  customer: string;
+  project: string;
+  product: string;
   onClose: () => void;
   // Quote states
   quoteStarted: boolean;
-  setQuoteStarted: (val: boolean) => void;
   quoteCompleted: boolean;
-  setQuoteCompleted: (val: boolean) => void;
   quoteConfirmed: boolean;
   setQuoteConfirmed: (val: boolean) => void;
   // Batch states
@@ -34,23 +37,21 @@ type RightSidebarProps = {
   setBrCompleted: (val: boolean) => void;
   brConfirmed: boolean;
   setBrConfirmed: (val: boolean) => void;
-};
-
-type ProjectProps = {
-  id: string;
-  projectName: string;
-  customer: string;
-  address: string;
+  onGenerateQuote: () => void;
+  onfetchQuote: () => void;
+  rfqFields: RFQFields | null;
+  fetchRFQ: () => void;
+  quoteSheetData: Record<string, any> | null;
 };
 
 export default function RightSidebar({
   selectedNode,
+  customer,
   project,
+  product,
   onClose,
   quoteStarted,
-  setQuoteStarted,
   quoteCompleted,
-  setQuoteCompleted,
   quoteConfirmed,
   setQuoteConfirmed,
   brStarted,
@@ -59,9 +60,22 @@ export default function RightSidebar({
   setBrCompleted,
   brConfirmed,
   setBrConfirmed,
+  onGenerateQuote,
+  onfetchQuote,
+  rfqFields,
+  fetchRFQ,
+  quoteSheetData,
 }: RightSidebarProps) {
   const isCPQ = selectedNode === 'CPQ';
   const isBatch = selectedNode === 'Batch Records';
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchRFQ();
+    }, 1000); // 1 second delay
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className='absolute right-0 top-0 h-full w-1/4 bg-white border-l border-gray-300 shadow-lg z-50 flex flex-col'>
@@ -69,7 +83,7 @@ export default function RightSidebar({
       <div className='bg-gray-800 text-white px-4 py-3 flex justify-between items-start'>
         <div>
           <div className='text-lg font-bold'>{selectedNode}</div>
-          <div className='text-sm text-orange-400'>{project.customer}</div>
+          <div className='text-sm text-orange-400'>{customer}</div>
         </div>
         <button
           onClick={onClose}
@@ -82,13 +96,53 @@ export default function RightSidebar({
       {/* Analytics */}
       <div className='px-4 py-4 border-b border-gray-200 h-[26%]'>
         {(isCPQ && quoteCompleted) || (isBatch && brCompleted) ? (
-          <QuoteAnalyticsChart customer={project.customer} />
+          <QuoteAnalyticsChart customer={customer} />
+        ) : rfqFields ? (
+          <div className='space-y-1 text-sm text-gray-700 leading-snug'>
+            <div>
+              <span className='font-semibold'>Company:</span>{' '}
+              {rfqFields.company}
+            </div>
+            <div>
+              <span className='font-semibold'>RFQ Number:</span>{' '}
+              {rfqFields.rfqNumber}
+            </div>
+            <div>
+              <span className='font-semibold'>Release Date:</span>{' '}
+              {rfqFields.rfqReleaseDate}
+            </div>
+            <div>
+              <span className='font-semibold'>Due Date:</span>{' '}
+              {rfqFields.rfqDueDate}
+            </div>
+            <div>
+              <span className='font-semibold'>Issued By:</span>{' '}
+              {rfqFields.issuedBy}
+            </div>
+            <div>
+              <span className='font-semibold'>Email:</span> {rfqFields.email}
+            </div>
+            <div>
+              <span className='font-semibold'>Phone:</span> {rfqFields.phone}
+            </div>
+            <div>
+              <span className='font-semibold'>Product:</span>{' '}
+              {rfqFields.product}
+            </div>
+            <div>
+              <span className='font-semibold'>Spec:</span>{' '}
+              {rfqFields.specification}
+            </div>
+            <div>
+              <span className='font-semibold'>Qty:</span> {rfqFields.orderQty}
+            </div>
+          </div>
         ) : (
-          <div className='animate-pulse space-y-2'>
-            <div className='h-4 bg-gray-200 rounded w-3/4' />
-            <div className='h-4 bg-gray-200 rounded w-5/6' />
-            <div className='h-4 bg-gray-200 rounded w-1/2' />
-            <div className='h-4 bg-gray-200 rounded w-2/3' />
+          <div className='flex h-full items-center justify-center'>
+            <div className='flex items-center gap-2 text-sm text-gray-700'>
+              <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
+              CPQ Agent fetching RFQ data...
+            </div>
           </div>
         )}
       </div>
@@ -99,22 +153,28 @@ export default function RightSidebar({
           <>
             {!quoteStarted ? (
               <button
-                onClick={() => setQuoteStarted(true)}
+                onClick={onGenerateQuote}
                 className='w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition'
               >
                 Generate Quote
               </button>
+            ) : !quoteCompleted ? (
+              <div className='flex flex-col items-center justify-center h-40 text-sm text-gray-700'>
+                <ReloadIcon className='animate-spin text-blue-500 w-6 h-6 mb-2' />
+                CPQ Agent updating pricing and building quote...
+              </div>
             ) : (
-              <>
-                <QuoteStepper onComplete={() => setQuoteCompleted(true)} />
-                {quoteCompleted && (
-                  <QuoteThumbnail
-                    project={project}
-                    quoteConfirmed={quoteConfirmed}
-                    setQuoteConfirmed={setQuoteConfirmed}
-                  />
-                )}
-              </>
+              quoteSheetData && (
+                <QuoteThumbnail
+                  customer={customer}
+                  project={project}
+                  product={product}
+                  quoteConfirmed={quoteConfirmed}
+                  setQuoteConfirmed={setQuoteConfirmed}
+                  quoteSheetData={quoteSheetData}
+                  onfetchQuote={onfetchQuote}
+                />
+              )
             )}
           </>
         )}
@@ -133,7 +193,9 @@ export default function RightSidebar({
                 <BatchRecordStepper onComplete={() => setBrCompleted(true)} />
                 {brCompleted && (
                   <BatchRecordThumbnail
+                    customer={customer}
                     project={project}
+                    product={product}
                     batchConfirmed={brConfirmed}
                     setBatchConfirmed={setBrConfirmed}
                   />

@@ -24,8 +24,8 @@ import { initialNodes, getDynamicEdges } from './workflowConfig';
 
 // 🧠 Track child relationships for progress
 const childMap: Record<string, string[]> = {
-  make: ['cpq', 'product'],
-  product: ['batch'],
+  make: ['cpq', 'production'],
+  production: ['batch'],
 };
 
 type WorkflowCanvasProps = {

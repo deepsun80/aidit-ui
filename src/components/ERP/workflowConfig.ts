@@ -5,27 +5,19 @@
  * - `initialNodes`: default layout and settings for each process node
  * - `nodeMap`: quick lookup map of node IDs to config
  * - `getDynamicEdges()`: generates animated edges based on progress/completion state
- * - `childMap`: defines dependency relationships for cascading progress updates
  */
 
 import { Edge, Node } from '@xyflow/react';
 
 export const initialNodes: Node[] = [
-  {
-    id: 'onboarding',
-    position: { x: 0, y: 50 },
-    type: 'splitNode',
-    data: { label: 'Onboarding', hasBottomHandle: true, disabled: true },
-    style: { width: 90, height: 30 },
-    draggable: false,
-  },
+  // Design flow
   {
     id: 'design',
-    position: { x: 0, y: 140 },
+    position: { x: 0, y: 100 },
     type: 'splitNode',
     data: {
       label: 'Design',
-      hasTopHandle: true,
+      hasRightHandle: true,
       hasBottomHandle: true,
       disabled: true,
     },
@@ -33,12 +25,62 @@ export const initialNodes: Node[] = [
     draggable: false,
   },
   {
-    id: 'procurement',
-    position: { x: 0, y: 230 },
+    id: 'project_mgmt',
+    position: { x: 120, y: 100 },
     type: 'splitNode',
     data: {
-      label: 'Procurement',
+      label: 'Project Management',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'product_design',
+    position: { x: 280, y: 100 },
+    type: 'splitNode',
+    data: {
+      label: 'Product Design',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 120, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'process_design',
+    position: { x: 430, y: 100 },
+    type: 'splitNode',
+    data: {
+      label: 'Process Design',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 120, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'transfer',
+    position: { x: 580, y: 100 },
+    type: 'splitNode',
+    data: { label: 'Transfer', hasLeftHandle: true, disabled: true },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+
+  // Source flow
+  {
+    id: 'source',
+    position: { x: 0, y: 200 },
+    type: 'splitNode',
+    data: {
+      label: 'Source',
       hasTopHandle: true,
+      hasRightHandle: true,
       hasBottomHandle: true,
       disabled: true,
     },
@@ -46,65 +88,206 @@ export const initialNodes: Node[] = [
     draggable: false,
   },
   {
+    id: 'supplier_setup',
+    position: { x: 120, y: 200 },
+    type: 'splitNode',
+    data: {
+      label: 'Supplier Setup',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'requisition',
+    position: { x: 280, y: 200 },
+    type: 'splitNode',
+    data: {
+      label: 'Requisition',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 110, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'po',
+    position: { x: 420, y: 200 },
+    type: 'splitNode',
+    data: { label: 'Purchase Order', hasLeftHandle: true, disabled: true },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+
+  // Make flow
+  {
     id: 'make',
-    position: { x: 0, y: 320 },
+    position: { x: 0, y: 300 },
     type: 'splitNode',
     data: {
       label: 'Make',
       hasTopHandle: true,
-      hasBottomHandle: true,
       hasRightHandle: true,
-      disabled: false,
+      hasBottomHandle: true,
     },
-    style: { width: 90, height: 30 },
-    draggable: false,
-  },
-  {
-    id: 'delivery',
-    position: { x: 0, y: 410 },
-    type: 'splitNode',
-    data: { label: 'Delivery', hasTopHandle: true, disabled: true },
     style: { width: 90, height: 30 },
     draggable: false,
   },
   {
     id: 'cpq',
-    position: { x: 150, y: 320 },
+    position: { x: 120, y: 300 },
     type: 'splitNode',
     data: {
       label: 'CPQ',
       hasLeftHandle: true,
       hasRightHandle: true,
-      disabled: false,
       clickable: true,
     },
     style: { width: 90, height: 30 },
     draggable: false,
   },
   {
-    id: 'product',
-    position: { x: 300, y: 320 },
+    id: 'rework',
+    position: { x: 240, y: 300 },
     type: 'splitNode',
     data: {
-      label: 'Product Creation',
+      label: 'Rework Orders',
       hasLeftHandle: true,
-      hasBottomHandle: true,
-      disabled: false,
+      hasRightHandle: true,
+      disabled: true,
     },
-    style: { width: 90, height: 30 },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'production',
+    position: { x: 400, y: 300 },
+    type: 'splitNode',
+    data: { label: 'Production', hasLeftHandle: true, hasRightHandle: true },
+    style: { width: 110, height: 30 },
     draggable: false,
   },
   {
     id: 'batch',
-    position: { x: 300, y: 410 },
+    position: { x: 540, y: 300 },
+    type: 'splitNode',
+    data: { label: 'Batch Records', hasLeftHandle: true, clickable: true },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+
+  // Delivery flow
+  {
+    id: 'delivery',
+    position: { x: 0, y: 400 },
     type: 'splitNode',
     data: {
-      label: 'Batch Records',
+      label: 'Delivery',
       hasTopHandle: true,
-      disabled: false,
-      clickable: true,
+      hasRightHandle: true,
+      hasBottomHandle: true,
+      disabled: true,
     },
     style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'customer_setup',
+    position: { x: 120, y: 400 },
+    type: 'splitNode',
+    data: {
+      label: 'Customer Setup',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'sales_order',
+    position: { x: 280, y: 400 },
+    type: 'splitNode',
+    data: {
+      label: 'Sales Order',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 110, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'shipping',
+    position: { x: 420, y: 400 },
+    type: 'splitNode',
+    data: {
+      label: 'Shipping',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'invoice',
+    position: { x: 540, y: 400 },
+    type: 'splitNode',
+    data: { label: 'Invoice', hasLeftHandle: true, disabled: true },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+
+  // Inventory flow
+  {
+    id: 'inventory',
+    position: { x: 0, y: 500 },
+    type: 'splitNode',
+    data: {
+      label: 'Inventory',
+      hasTopHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'inventory_mgmt',
+    position: { x: 120, y: 500 },
+    type: 'splitNode',
+    data: {
+      label: 'Inventory Management',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 160, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'receiving',
+    position: { x: 310, y: 500 },
+    type: 'splitNode',
+    data: {
+      label: 'Receiving',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 90, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'return_supplier',
+    position: { x: 430, y: 500 },
+    type: 'splitNode',
+    data: { label: 'Return to Supplier', hasLeftHandle: true, disabled: true },
+    style: { width: 150, height: 30 },
     draggable: false,
   },
 ];
@@ -115,17 +298,37 @@ export const nodeMap = Object.fromEntries(
 
 export const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
   return [
-    { source: 'onboarding', target: 'design' },
-    { source: 'design', target: 'procurement' },
-    { source: 'procurement', target: 'make' },
-    { source: 'make', target: 'delivery', sourceHandle: 'bottom' },
+    { source: 'design', target: 'project_mgmt', sourceHandle: 'right' },
+    { source: 'project_mgmt', target: 'product_design' },
+    { source: 'product_design', target: 'process_design' },
+    { source: 'process_design', target: 'transfer' },
+
+    { source: 'source', target: 'supplier_setup', sourceHandle: 'right' },
+    { source: 'supplier_setup', target: 'requisition' },
+    { source: 'requisition', target: 'po' },
+
     { source: 'make', target: 'cpq', sourceHandle: 'right' },
-    { source: 'cpq', target: 'product' },
-    { source: 'product', target: 'batch' },
+    { source: 'cpq', target: 'rework' },
+    { source: 'rework', target: 'production' },
+    { source: 'production', target: 'batch' },
+
+    { source: 'delivery', target: 'customer_setup', sourceHandle: 'right' },
+    { source: 'customer_setup', target: 'sales_order' },
+    { source: 'sales_order', target: 'shipping' },
+    { source: 'shipping', target: 'invoice' },
+
+    { source: 'inventory', target: 'inventory_mgmt', sourceHandle: 'right' },
+    { source: 'inventory_mgmt', target: 'receiving' },
+    { source: 'receiving', target: 'return_supplier' },
+
+    // 🆕 Vertical connections for primary flow columns
+    { source: 'design', target: 'source', sourceHandle: 'bottom' },
+    { source: 'source', target: 'make', sourceHandle: 'bottom' },
+    { source: 'make', target: 'delivery', sourceHandle: 'bottom' },
+    { source: 'delivery', target: 'inventory', sourceHandle: 'bottom' },
   ].map((edge, index) => {
     const sourceNode = nodeMap[edge.source];
     const targetNode = nodeMap[edge.target];
-
     const sourceDisabled = sourceNode?.data?.disabled;
     const targetDisabled = targetNode?.data?.disabled;
     const sourceProgress = completion[edge.source] ?? 0;

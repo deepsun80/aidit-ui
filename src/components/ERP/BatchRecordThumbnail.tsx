@@ -17,20 +17,17 @@ import {
 } from '@radix-ui/react-icons';
 
 interface BatchRecordThumbnailProps {
-  project: ProjectProps;
+  customer: string;
+  project: string;
+  product: string;
   batchConfirmed: boolean;
   setBatchConfirmed: (val: boolean) => void;
 }
 
-type ProjectProps = {
-  id: string;
-  projectName: string;
-  customer: string;
-  address: string;
-};
-
 export default function BatchRecordThumbnail({
+  customer,
   project,
+  product,
   batchConfirmed,
   setBatchConfirmed,
 }: BatchRecordThumbnailProps) {
@@ -102,11 +99,13 @@ export default function BatchRecordThumbnail({
         <div className='text-xs text-gray-800 leading-snug'>
           <div className='text-sm font-bold mb-2'>Batch Record Report 1</div>
           <div>
-            <span className='font-semibold'>Project:</span>{' '}
-            {project.projectName}
+            <span className='font-semibold'>Customer:</span> {customer}
           </div>
           <div>
-            <span className='font-semibold'>Customer:</span> {project.customer}
+            <span className='font-semibold'>Project:</span> {project}
+          </div>
+          <div>
+            <span className='font-semibold'>Product:</span> {product}
           </div>
         </div>
 
