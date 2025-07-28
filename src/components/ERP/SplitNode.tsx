@@ -49,46 +49,90 @@ export default function SplitNode({ data }: NodeProps) {
         />
       )}
       {hasBottomHandle && (
-        <Handle
-          type='source'
-          id='bottom'
-          position={Position.Bottom}
-          style={{
-            top: '30px',
-            height: 7,
-            width: 7,
-            background: disabled ? '#d1d5dc' : borderDefault,
-            pointerEvents: 'none',
-          }}
-          className={clickable ? 'group-hover:!bg-[#374151]' : ''}
-        />
+        <>
+          <Handle
+            type='source'
+            id='bottom'
+            position={Position.Bottom}
+            style={{
+              top: '30px',
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+          <Handle
+            type='target'
+            id='bottom'
+            position={Position.Bottom}
+            style={{
+              top: '30px',
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+        </>
       )}
       {hasLeftHandle && (
-        <Handle
-          type='target'
-          position={Position.Left}
-          style={{
-            height: 7,
-            width: 7,
-            background: disabled ? '#d1d5dc' : borderDefault,
-            pointerEvents: 'none',
-          }}
-          className={clickable ? 'group-hover:!bg-[#374151]' : ''}
-        />
+        <>
+          <Handle
+            type='target'
+            id='left'
+            position={Position.Left}
+            style={{
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+          <Handle
+            type='source'
+            id='left'
+            position={Position.Left}
+            style={{
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+        </>
       )}
       {hasRightHandle && (
-        <Handle
-          type='source'
-          id='right'
-          position={Position.Right}
-          style={{
-            height: 7,
-            width: 7,
-            background: disabled ? '#d1d5dc' : borderDefault,
-            pointerEvents: 'none',
-          }}
-          className={clickable ? 'group-hover:!bg-[#374151]' : ''}
-        />
+        <>
+          <Handle
+            type='source'
+            id='right'
+            position={Position.Right}
+            style={{
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+          <Handle
+            type='target'
+            id='right'
+            position={Position.Right}
+            style={{
+              height: 7,
+              width: 7,
+              background: disabled ? '#d1d5dc' : borderDefault,
+              pointerEvents: 'none',
+            }}
+            className={clickable ? 'group-hover:!bg-[#374151]' : ''}
+          />
+        </>
       )}
 
       <div

@@ -150,8 +150,73 @@ export const initialNodes: Node[] = [
     draggable: false,
   },
   {
-    id: 'rework',
+    id: 'production',
     position: { x: 240, y: 300 },
+    type: 'splitNode',
+    data: {
+      label: 'Production',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      hasBottomHandle: true,
+    },
+    style: { width: 110, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'receive_po',
+    position: { x: 370, y: 300 },
+    type: 'splitNode',
+    data: {
+      label: 'Receive PO',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 100, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'initiate_po',
+    position: { x: 490, y: 300 },
+    type: 'splitNode',
+    data: {
+      label: 'Initiate PO',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      disabled: true,
+    },
+    style: { width: 110, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'batch',
+    position: { x: 620, y: 300 },
+    type: 'splitNode',
+    data: {
+      label: 'Batch Records',
+      hasLeftHandle: true,
+      hasRightHandle: true,
+      clickable: true,
+    },
+    style: { width: 130, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'release',
+    position: { x: 770, y: 300 },
+    type: 'splitNode',
+    data: {
+      label: 'Production Release',
+      hasLeftHandle: true,
+      hasBottomHandle: true,
+      disabled: true,
+    },
+    style: { width: 150, height: 30 },
+    draggable: false,
+  },
+  {
+    id: 'rework',
+    position: { x: 480, y: 380 },
     type: 'splitNode',
     data: {
       label: 'Rework Orders',
@@ -162,27 +227,11 @@ export const initialNodes: Node[] = [
     style: { width: 130, height: 30 },
     draggable: false,
   },
-  {
-    id: 'production',
-    position: { x: 400, y: 300 },
-    type: 'splitNode',
-    data: { label: 'Production', hasLeftHandle: true, hasRightHandle: true },
-    style: { width: 110, height: 30 },
-    draggable: false,
-  },
-  {
-    id: 'batch',
-    position: { x: 540, y: 300 },
-    type: 'splitNode',
-    data: { label: 'Batch Records', hasLeftHandle: true, clickable: true },
-    style: { width: 130, height: 30 },
-    draggable: false,
-  },
 
   // Delivery flow
   {
     id: 'delivery',
-    position: { x: 0, y: 400 },
+    position: { x: 0, y: 460 },
     type: 'splitNode',
     data: {
       label: 'Delivery',
@@ -196,7 +245,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'customer_setup',
-    position: { x: 120, y: 400 },
+    position: { x: 120, y: 460 },
     type: 'splitNode',
     data: {
       label: 'Customer Setup',
@@ -209,7 +258,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'sales_order',
-    position: { x: 280, y: 400 },
+    position: { x: 280, y: 460 },
     type: 'splitNode',
     data: {
       label: 'Sales Order',
@@ -222,7 +271,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'shipping',
-    position: { x: 420, y: 400 },
+    position: { x: 420, y: 460 },
     type: 'splitNode',
     data: {
       label: 'Shipping',
@@ -235,7 +284,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'invoice',
-    position: { x: 540, y: 400 },
+    position: { x: 540, y: 460 },
     type: 'splitNode',
     data: { label: 'Invoice', hasLeftHandle: true, disabled: true },
     style: { width: 90, height: 30 },
@@ -245,7 +294,7 @@ export const initialNodes: Node[] = [
   // Inventory flow
   {
     id: 'inventory',
-    position: { x: 0, y: 500 },
+    position: { x: 0, y: 560 },
     type: 'splitNode',
     data: {
       label: 'Inventory',
@@ -258,7 +307,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'inventory_mgmt',
-    position: { x: 120, y: 500 },
+    position: { x: 120, y: 560 },
     type: 'splitNode',
     data: {
       label: 'Inventory Management',
@@ -271,7 +320,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'receiving',
-    position: { x: 310, y: 500 },
+    position: { x: 310, y: 560 },
     type: 'splitNode',
     data: {
       label: 'Receiving',
@@ -284,7 +333,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: 'return_supplier',
-    position: { x: 430, y: 500 },
+    position: { x: 430, y: 560 },
     type: 'splitNode',
     data: { label: 'Return to Supplier', hasLeftHandle: true, disabled: true },
     style: { width: 150, height: 30 },
@@ -307,10 +356,41 @@ export const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
     { source: 'supplier_setup', target: 'requisition' },
     { source: 'requisition', target: 'po' },
 
-    { source: 'make', target: 'cpq', sourceHandle: 'right' },
-    { source: 'cpq', target: 'rework' },
-    { source: 'rework', target: 'production' },
-    { source: 'production', target: 'batch' },
+    {
+      source: 'make',
+      target: 'cpq',
+      sourceHandle: 'right',
+      targetHandle: 'left',
+    },
+    {
+      source: 'cpq',
+      target: 'production',
+      sourceHandle: 'right',
+      targetHandle: 'left',
+    },
+    { source: 'production', target: 'receive_po', sourceHandle: 'right' },
+    { source: 'receive_po', target: 'initiate_po' },
+    { source: 'initiate_po', target: 'batch' },
+    {
+      source: 'batch',
+      target: 'release',
+      sourceHandle: 'right',
+      targetHandle: 'left',
+    },
+    {
+      source: 'release',
+      target: 'rework',
+      sourceHandle: 'bottom',
+      targetHandle: 'right',
+      type: 'smoothstep',
+    },
+    {
+      source: 'rework',
+      target: 'production',
+      sourceHandle: 'left',
+      targetHandle: 'bottom',
+      type: 'smoothstep',
+    },
 
     { source: 'delivery', target: 'customer_setup', sourceHandle: 'right' },
     { source: 'customer_setup', target: 'sales_order' },
@@ -339,7 +419,7 @@ export const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
     return {
       id: `e${index + 1}`,
       ...edge,
-      type: 'default',
+      type: edge.type || 'default',
       animated: shouldAnimate,
       style: {
         stroke: isDisabled ? '#d1d5db' : shouldAnimate ? '#78b3de' : '#1a192b',
