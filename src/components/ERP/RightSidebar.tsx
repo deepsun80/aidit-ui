@@ -10,7 +10,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import QuoteThumbnail from './QuoteThumbnail';
 import QuoteAnalyticsChart from './QuoteAnalyticsChart';
@@ -42,6 +42,7 @@ type RightSidebarProps = {
   rfqFields: RFQFields | null;
   fetchRFQ: () => void;
   quoteSheetData: Record<string, any> | null;
+  downloadQuotePDF: () => void;
 };
 
 export default function RightSidebar({
@@ -65,17 +66,13 @@ export default function RightSidebar({
   rfqFields,
   fetchRFQ,
   quoteSheetData,
+  downloadQuotePDF,
 }: RightSidebarProps) {
   const isCPQ = selectedNode === 'CPQ';
   const isBatch = selectedNode === 'Batch Records';
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchRFQ();
-    }, 1000); // 1 second delay
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [rfqSelected, setRfqSelected] = useState(false);
+  const [rfqChoice, setRfqChoice] = useState('');
 
   return (
     <div className='absolute right-0 top-0 h-full w-1/4 bg-white border-l border-gray-300 shadow-lg z-50 flex flex-col'>
@@ -97,15 +94,53 @@ export default function RightSidebar({
       <div className='px-4 py-4 border-b border-gray-200 h-[26%]'>
         {(isCPQ && quoteCompleted) || (isBatch && brCompleted) ? (
           <QuoteAnalyticsChart customer={customer} />
-        ) : rfqFields ? (
+        ) : !rfqSelected ? (
+          <div className='flex flex-col gap-2 text-sm text-gray-700'>
+            <label htmlFor='rfq-select' className='font-semibold'>
+              Select RFQ
+            </label>
+            <select
+              id='rfq-select'
+              className='bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-600'
+              value={rfqChoice}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === 'TECO-061225') {
+                  setRfqChoice(val);
+                  setRfqSelected(true);
+
+                  setTimeout(() => {
+                    fetchRFQ();
+                  }, 1000);
+                }
+              }}
+            >
+              <option value=''>-- Choose RFQ --</option>
+              <option value='TECO-061225'>TECO-061225</option>
+              <option value='STX-042224' disabled>
+                STX-042224
+              </option>
+              <option value='FLEX-050124' disabled>
+                FLEX-050124
+              </option>
+            </select>
+          </div>
+        ) : !rfqFields ? (
+          <div className='flex h-full items-center justify-center'>
+            <div className='flex items-center gap-2 text-sm text-gray-700'>
+              <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
+              CPQ Agent fetching RFQ data...
+            </div>
+          </div>
+        ) : (
           <div className='space-y-1 text-sm text-gray-700 leading-snug'>
+            <div className='font-semibold'>
+              RFQ Number:{' '}
+              <span className='text-gray-600'>{rfqFields.rfqNumber}</span>
+            </div>
             <div>
               <span className='font-semibold'>Company:</span>{' '}
               {rfqFields.company}
-            </div>
-            <div>
-              <span className='font-semibold'>RFQ Number:</span>{' '}
-              {rfqFields.rfqNumber}
             </div>
             <div>
               <span className='font-semibold'>Release Date:</span>{' '}
@@ -137,13 +172,6 @@ export default function RightSidebar({
               <span className='font-semibold'>Qty:</span> {rfqFields.orderQty}
             </div>
           </div>
-        ) : (
-          <div className='flex h-full items-center justify-center'>
-            <div className='flex items-center gap-2 text-sm text-gray-700'>
-              <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
-              CPQ Agent fetching RFQ data...
-            </div>
-          </div>
         )}
       </div>
 
@@ -173,6 +201,7 @@ export default function RightSidebar({
                   setQuoteConfirmed={setQuoteConfirmed}
                   quoteSheetData={quoteSheetData}
                   onfetchQuote={onfetchQuote}
+                  downloadQuotePDF={downloadQuotePDF}
                 />
               )
             )}

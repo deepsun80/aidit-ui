@@ -25,6 +25,7 @@ interface QuoteThumbnailProps {
   setQuoteConfirmed: (val: boolean) => void;
   quoteSheetData: Record<string, any>;
   onfetchQuote: () => void;
+  downloadQuotePDF: () => void;
 }
 
 export default function QuoteThumbnail({
@@ -35,12 +36,14 @@ export default function QuoteThumbnail({
   setQuoteConfirmed,
   quoteSheetData,
   onfetchQuote,
+  downloadQuotePDF,
 }: QuoteThumbnailProps) {
   const {
     ['RFQ number']: rfqNumber,
     Units,
     Profit,
-    ['Selling Price']: sellingPrice,
+    ['Total Price']: totalPrice,
+    ['Unit Price']: unitPrice,
   } = quoteSheetData;
 
   return (
@@ -66,8 +69,8 @@ export default function QuoteThumbnail({
         </div>
 
         {/* Quote Preview */}
-        <div className='text-xs text-gray-800 leading-snug'>
-          <div className='text-sm font-bold mb-2'>Quote Summary</div>
+        <div className='text-xs text-gray-800 flex flex-col gap-2'>
+          <div className='text-sm font-bold'>Quote Summary</div>
           <div>
             <span className='font-semibold'>Customer:</span> {customer}
           </div>
@@ -77,26 +80,30 @@ export default function QuoteThumbnail({
           <div>
             <span className='font-semibold'>Product:</span> {product}
           </div>
-          <div className='mt-2'>
-            <span className='font-semibold'>RFQ Unit:</span> {rfqNumber}
+          <div>
+            <span className='font-semibold'>RFQ Number:</span> {rfqNumber}
           </div>
-          <div className='mt-2'>
+          <div>
             <span className='font-semibold'>Scope:</span> Manufacturing of
             custom medical devices per design specification, including
             procurement, production, and batch QC.
           </div>
-          <div className='mt-1'>
+          <div>
             <span className='font-semibold'>Estimated Lead Time:</span> 6–8
             weeks
           </div>
-          <div className='mt-1'>
+          <div>
             <span className='font-semibold'>Unit Order Quantity:</span> {Units}
           </div>
-          <div className='mt-1'>
-            <span className='font-semibold'>Total:</span> $
-            {sellingPrice.toFixed(2)} USD
+          <div>
+            <span className='font-semibold'>Total Price:</span> $
+            {totalPrice.toFixed(2)} USD
           </div>
-          <div className='mt-1'>
+          <div>
+            <span className='font-semibold'>Unit Price:</span> $
+            {unitPrice.toFixed(2)} USD
+          </div>
+          <div>
             <span className='font-semibold'>Profit:</span> {Profit * 100}%
           </div>
         </div>
@@ -105,11 +112,14 @@ export default function QuoteThumbnail({
       {/* Confirm Button */}
       {!quoteConfirmed ? (
         <button
-          onClick={() => setQuoteConfirmed(true)}
+          onClick={() => {
+            setQuoteConfirmed(true);
+            downloadQuotePDF();
+          }}
           className='mt-8 w-full py-1 px-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition'
         >
           <CheckCircledIcon className='inline-block mr-1' />
-          Confirm Quote
+          Generate Quote
         </button>
       ) : (
         <div className='mt-6 flex items-center gap-2 text-sm text-gray-800'>

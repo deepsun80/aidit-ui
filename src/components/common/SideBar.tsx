@@ -22,7 +22,7 @@ export default function Sidebar({
   const [showQmsSubmenu, setShowQmsSubmenu] = useState(false);
 
   return (
-    <aside className='w-55 bg-gray-700 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
+    <aside className='w-55 bg-gray-600 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
       {/* <aside className='w-60 bg-gradient-to-b from-gray-600 to-gray-900 text-white flex flex-col items-center pt-6 min-h-full gap-20'> */}
       {/* Logo */}
       <div className='flex items-center'>

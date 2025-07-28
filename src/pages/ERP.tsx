@@ -4,6 +4,11 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { RFQFields } from '@/types/rfq';
+import {
+  MagnifyingGlassIcon,
+  PlusIcon,
+  DownloadIcon,
+} from '@radix-ui/react-icons';
 
 const WorkflowCanvas = dynamic(
   () => import('@/components/ERP/WorkflowCanvas'),
@@ -108,7 +113,6 @@ export default function ERP() {
     }
   };
 
-  // Fetch RFQ fields once on mount
   const fetchRFQ = async () => {
     try {
       const res = await fetch('/api/generate-rfq');
@@ -119,66 +123,124 @@ export default function ERP() {
     }
   };
 
-  // console.log('quoteSummary:', quoteSummary);
-  // console.log('pricingTable:', pricingTable);
+  const downloadQuotePDF = async () => {
+    try {
+      if (!quoteSheetData || !rfqFields) {
+        console.warn('Missing quote data or RFQ fields');
+        return;
+      }
+
+      const res = await fetch('/api/generate-quote-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quoteSheetData, rfqFields }),
+      });
+
+      if (!res.ok) {
+        console.error('PDF generation failed');
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Quote_${rfqFields.rfqNumber.replace(/\s+/g, '_')}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading PDF:', err);
+    }
+  };
+
   console.log('quoteSheetData:', quoteSheetData);
   console.log('rfqFields:', rfqFields);
 
   return (
-    <div className='h-full w-full bg-gray-100 p-4 text-gray-800'>
-      <div className='flex justify-between items-start mb-4'>
-        <div>
-          <div className='text-lg font-semibold text-orange-600'>
-            {selectedCustomer}
+    <div className='h-full w-full bg-gray-200 p-4 text-gray-800'>
+      <div className='flex justify-between items-end mb-4 gap-4'>
+        <div className='flex gap-4 items-end'>
+          <div className='flex flex-col text-xs text-gray-600'>
+            <label htmlFor='customer' className='font-bold'>
+              Customer
+            </label>
+            <div className='relative flex items-center'>
+              <MagnifyingGlassIcon className='absolute left-2 h-4 w-4 text-gray-400' />
+              <select
+                id='customer'
+                value={selectedCustomer}
+                onChange={(e) => setSelectedCustomer(e.target.value)}
+                className='pl-7 pr-2 py-1 text-sm bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600'
+              >
+                {customers.map((c, index) => (
+                  <option key={c} value={c} disabled={index !== 0}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className='flex items-baseline gap-2'>
-            <h1 className='text-md font-extrabold text-gray-900'>
-              {selectedProject}
-            </h1>
-            <span className='text-sm italic text-gray-500'>
-              {selectedProduct}
-            </span>
+
+          <div className='flex flex-col text-xs text-gray-600'>
+            <label htmlFor='project' className='font-bold'>
+              Project
+            </label>
+            <div className='relative flex items-center'>
+              <MagnifyingGlassIcon className='absolute left-2 h-4 w-4 text-gray-400' />
+              <select
+                id='project'
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                className='pl-7 pr-2 py-1 text-sm bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600'
+              >
+                {projects.map((p, index) => (
+                  <option key={p} value={p} disabled={index !== 0}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className='flex flex-col text-xs text-gray-600'>
+            <label htmlFor='product' className='font-bold'>
+              Product
+            </label>
+            <div className='relative flex items-center'>
+              <MagnifyingGlassIcon className='absolute left-2 h-4 w-4 text-gray-400' />
+              <select
+                id='product'
+                value={selectedProduct}
+                onChange={(e) => setSelectedProduct(e.target.value)}
+                className='pl-7 pr-2 py-1 text-sm bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600'
+              >
+                {products.map((p, index) => (
+                  <option key={p} value={p} disabled={index !== 0}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         <div className='flex gap-2'>
-          <select
-            value={selectedCustomer}
-            onChange={(e) => setSelectedCustomer(e.target.value)}
-            className='text-sm bg-white border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-gray-600'
+          <button
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            title='Add Customer'
           >
-            {customers.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedProject}
-            onChange={(e) => setSelectedProject(e.target.value)}
-            className='text-sm bg-white border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-gray-600'
+            <PlusIcon className='text-white w-5 h-5' />
+          </button>
+          <button
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            title='Export Wofkflow'
           >
-            {projects.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedProduct}
-            onChange={(e) => setSelectedProduct(e.target.value)}
-            className='text-sm bg-white border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-gray-600'
-          >
-            {products.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
+            <DownloadIcon className='text-white w-5 h-5' />
+          </button>
         </div>
       </div>
 
-      <div className='w-full h-[80vh] border border-gray-300 rounded-b shadow bg-white'>
+      <div className='w-full h-[80vh] border border-gray-300 rounded-b shadow-md bg-white'>
         <WorkflowCanvas
           setSelectedNode={setSelectedNode}
           progressByNodeId={{
@@ -213,6 +275,7 @@ export default function ERP() {
           rfqFields={rfqFields}
           fetchRFQ={fetchRFQ}
           quoteSheetData={quoteSheetData}
+          downloadQuotePDF={downloadQuotePDF}
         />
       )}
     </div>

@@ -94,7 +94,7 @@ export default function Home() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-100 flex flex-row'>
+    <div className='min-h-screen bg-gray-200 flex flex-row'>
       <Sidebar setActivePage={setActivePage} activePage={activePage} />
       <div className='flex flex-col flex-1'>
         <Header />

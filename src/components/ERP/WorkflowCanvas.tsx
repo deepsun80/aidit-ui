@@ -97,8 +97,8 @@ export default function WorkflowCanvas({
       <Background
         variant={BackgroundVariant.Dots}
         gap={12}
-        size={1}
-        color='#cbd5e1'
+        size={0.75}
+        color='LightSlateGrey'
       />
       <Controls showInteractive={false} />
     </ReactFlow>
