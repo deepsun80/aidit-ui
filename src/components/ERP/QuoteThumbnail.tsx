@@ -48,7 +48,7 @@ export default function QuoteThumbnail({
 
   return (
     <>
-      <div className='mt-8 border border-gray-300 rounded-md p-4 bg-gray-50 relative'>
+      <div className='mt-4 border border-gray-300 rounded-md p-4 bg-gray-50 relative'>
         {/* Top Action Buttons */}
         <div className='absolute top-2 right-2 flex gap-2'>
           <button

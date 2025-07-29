@@ -91,9 +91,9 @@ export default function RightSidebar({
       </div>
 
       {/* Analytics */}
-      <div className='px-4 py-4 border-b border-gray-200 h-[26%]'>
+      <div className='px-4 py-4 border-b border-gray-200 h-[32%]'>
         {(isCPQ && quoteCompleted) || (isBatch && brCompleted) ? (
-          <QuoteAnalyticsChart customer={customer} />
+          <QuoteAnalyticsChart />
         ) : !rfqSelected ? (
           <div className='flex flex-col gap-2 text-sm text-gray-700'>
             <label htmlFor='rfq-select' className='font-semibold'>
@@ -133,7 +133,7 @@ export default function RightSidebar({
             </div>
           </div>
         ) : (
-          <div className='space-y-1 text-sm text-gray-700 leading-snug'>
+          <div className='space-y-2 text-sm text-gray-700 leading-snug'>
             <div className='font-semibold'>
               RFQ Number:{' '}
               <span className='text-gray-600'>{rfqFields.rfqNumber}</span>
@@ -182,7 +182,8 @@ export default function RightSidebar({
             {!quoteStarted ? (
               <button
                 onClick={onGenerateQuote}
-                className='w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition'
+                disabled={!rfqFields}
+                className='w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed'
               >
                 Generate Quote
               </button>

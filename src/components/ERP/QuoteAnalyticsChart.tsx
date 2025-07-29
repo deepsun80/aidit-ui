@@ -9,75 +9,89 @@
 
 'use client';
 
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-} from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { ArchiveIcon, BarChartIcon } from '@radix-ui/react-icons';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface QuoteAnalyticsChartProps {
-  customer: string;
-}
-
-export default function QuoteAnalyticsChart({
-  customer,
-}: QuoteAnalyticsChartProps) {
-  const demoData = [
-    { name: customer, rate: 72 },
-    { name: 'MedCore Labs', rate: 55 },
-    { name: 'AxisGenix Inc.', rate: 63 },
-    { name: 'NovaForm Devices', rate: 41 },
+export default function QuoteAnalyticsChart() {
+  const monthlyStats = [
+    { month: 'Jan', orders: 10, value: 400 },
+    { month: 'Feb', orders: 8, value: 300 },
+    { month: 'Mar', orders: 12, value: 450 },
+    { month: 'Apr', orders: 9, value: 380 },
+    { month: 'May', orders: 11, value: 410 },
+    { month: 'Jun', orders: 10, value: 390 },
+    { month: 'Jul', orders: 10, value: 375 },
+    { month: 'Aug', orders: 8, value: 300 },
+    { month: 'Sep', orders: 9, value: 325 },
+    { month: 'Oct', orders: 10, value: 360 },
+    { month: 'Nov', orders: 7, value: 310 },
+    { month: 'Dec', orders: 6, value: 300 },
   ];
 
   const data = {
-    labels: demoData.map((item) => item.name),
+    labels: monthlyStats.map((m) => m.month),
     datasets: [
       {
-        label: 'Quote to P.O. Conversion (%)',
-        data: demoData.map((item) => item.rate),
-        backgroundColor: demoData.map((item) =>
-          item.name === customer ? 'rgb(249, 115, 22)' : 'rgb(191, 219, 254)'
-        ),
-        borderRadius: 4,
-        barThickness: 16,
+        label: 'Orders',
+        data: monthlyStats.map((m) => m.orders),
+        backgroundColor: [
+          '#cbd5e1', // Jan - slate
+          '#a5f3fc', // Jul - cyan
+          '#d1d5db', // Feb - gray
+          '#fcd34d', // Nov - soft gold
+          '#bae6fd', // Jun - sky blue
+          '#e2e8f0', // Mar - cool gray
+          '#f3f4f6', // Apr - light gray
+          '#fde68a', // Oct - amber
+          '#e0f2fe', // May - light sky blue
+          '#bbf7d0', // Aug - green
+          '#fef9c3', // Sep - yellow
+          '#fbcfe8', // Dec - pink
+        ],
+        borderColor: 'white',
+        borderWidth: 2,
       },
     ],
   };
 
   const options = {
-    indexAxis: 'y' as const,
     responsive: true,
     plugins: {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (context: any) => `${context.raw}% conversion`,
+          label: (context: any) => {
+            const index = context.dataIndex;
+            const { value, orders } = monthlyStats[index];
+            return [`$${value} Total`, `${orders} Orders`];
+          },
         },
-      },
-    },
-    scales: {
-      x: {
-        max: 100,
-        ticks: { callback: (value: any) => `${value}%` },
-        grid: { color: 'rgba(0,0,0,0.05)' },
-      },
-      y: {
-        grid: { display: false },
       },
     },
   };
 
   return (
-    <div className='w-full px-2'>
-      <h2 className='text-sm font-semibold text-gray-700 mb-2'>
-        Quote to P.O. Conversion
-      </h2>
-      <Bar data={data} options={options} height={140} />
+    <div className='w-full px-2 flex flex-col gap-2'>
+      <h2 className='text-sm font-bold text-gray-700'>Key Statistics – 2025</h2>
+      <div className='flex justify-between items-center text-xs text-gray-600'>
+        <div className='flex items-center gap-2'>
+          <ArchiveIcon className='w-4 h-4 text-gray-500' />
+          <span>120 Total Orders</span>
+        </div>
+        <div className='flex items-center gap-2'>
+          <BarChartIcon className='w-4 h-4 text-gray-500' />
+          <span>$4,500 Total Profit</span>
+        </div>
+      </div>
+      <div className='text-xs font-bold text-gray-700 text-center'>
+        Orders per Month
+      </div>
+      <div className='h-50 w-50 m-auto'>
+        <Doughnut data={data} options={options} />
+      </div>
     </div>
   );
 }

@@ -176,11 +176,11 @@ export const initialNodes: Node[] = [
     draggable: false,
   },
   {
-    id: 'initiate_po',
+    id: 'initiate_wo',
     position: { x: 490, y: 300 },
     type: 'splitNode',
     data: {
-      label: 'Initiate PO',
+      label: 'Initiate WO',
       hasLeftHandle: true,
       hasRightHandle: true,
       disabled: true,
@@ -369,8 +369,8 @@ export const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
       targetHandle: 'left',
     },
     { source: 'production', target: 'receive_po', sourceHandle: 'right' },
-    { source: 'receive_po', target: 'initiate_po' },
-    { source: 'initiate_po', target: 'batch' },
+    { source: 'receive_po', target: 'initiate_wo' },
+    { source: 'initiate_wo', target: 'batch' },
     {
       source: 'batch',
       target: 'release',
