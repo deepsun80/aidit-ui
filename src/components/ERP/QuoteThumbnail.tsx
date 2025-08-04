@@ -10,7 +10,6 @@
 'use client';
 
 import {
-  EyeOpenIcon,
   Pencil1Icon,
   DownloadIcon,
   CheckCircledIcon,
@@ -56,9 +55,6 @@ export default function QuoteThumbnail({
             className='bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-700 text-gray-700 hover:text-white transition'
           >
             <ReloadIcon className='w-4 h-4' />
-          </button>
-          <button className='bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-700 text-gray-700 hover:text-white transition'>
-            <EyeOpenIcon className='w-4 h-4' />
           </button>
           <button className='bg-white border border-gray-300 rounded-full p-1 hover:bg-gray-700 text-gray-700 hover:text-white transition'>
             <Pencil1Icon className='w-4 h-4' />

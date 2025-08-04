@@ -47,6 +47,8 @@ export default function ERP() {
 
   const [rfqFields, setRfqFields] = useState<RFQFields | null>(null);
 
+  const [selectedBatches, setSelectedBatches] = useState<string[]>([]);
+
   const cpqProgress = quoteConfirmed
     ? 100
     : quoteCompleted
@@ -160,7 +162,7 @@ export default function ERP() {
     <div className='h-full w-full bg-gray-200 p-4 text-gray-800'>
       <div className='flex justify-between items-end mb-4 gap-4'>
         <div className='flex gap-4 items-end'>
-          <div className='flex flex-col text-xs text-gray-600'>
+          <div className='flex flex-col text-sm text-gray-600'>
             <label htmlFor='customer' className='font-bold'>
               Customer
             </label>
@@ -181,7 +183,7 @@ export default function ERP() {
             </div>
           </div>
 
-          <div className='flex flex-col text-xs text-gray-600'>
+          <div className='flex flex-col text-sm text-gray-600'>
             <label htmlFor='project' className='font-bold'>
               Project
             </label>
@@ -202,7 +204,7 @@ export default function ERP() {
             </div>
           </div>
 
-          <div className='flex flex-col text-xs text-gray-600'>
+          <div className='flex flex-col text-sm text-gray-600'>
             <label htmlFor='product' className='font-bold'>
               Product
             </label>
@@ -276,6 +278,9 @@ export default function ERP() {
           fetchRFQ={fetchRFQ}
           quoteSheetData={quoteSheetData}
           downloadQuotePDF={downloadQuotePDF}
+          // Batch Record states
+          selectedBatches={selectedBatches}
+          setSelectedBatches={setSelectedBatches}
         />
       )}
     </div>

@@ -97,7 +97,7 @@ export default function WorkflowCanvas({
       <Background
         variant={BackgroundVariant.Dots}
         gap={12}
-        size={0.75}
+        size={0.95}
         color='LightSlateGrey'
       />
       <Controls showInteractive={false} />

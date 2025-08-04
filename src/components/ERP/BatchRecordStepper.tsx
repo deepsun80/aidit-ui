@@ -25,7 +25,7 @@ export default function BatchRecordStepper({
 }: BatchRecordStepperProps) {
   const [steps, setSteps] = useState<Step[]>([
     { title: 'BR Agent getting customer requirements', complete: false },
-    { title: 'BR Agent generating batch record (1)', complete: false },
+    { title: 'BR Agent generating batch record report (1)', complete: false },
   ]);
   const [stepIndex, setStepIndex] = useState(0);
   const [batchStepCount, setBatchStepCount] = useState(1);
@@ -48,7 +48,7 @@ export default function BatchRecordStepper({
             i === 1
               ? {
                   ...step,
-                  title: `BR Agent generating batch record (${batchStepCount})`,
+                  title: `BR Agent generating batch record report (${batchStepCount})`,
                 }
               : step
           )

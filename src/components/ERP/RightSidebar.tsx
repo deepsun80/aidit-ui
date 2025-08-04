@@ -12,10 +12,18 @@
 
 import { useState } from 'react';
 import { Cross1Icon } from '@radix-ui/react-icons';
+
 import QuoteThumbnail from './QuoteThumbnail';
 import QuoteAnalyticsChart from './QuoteAnalyticsChart';
+import QuoteRFQSelector from './QuoteRFQSelector';
+import QuoteRFQ from './QuoteRFQ';
+
 import BatchRecordStepper from './BatchRecordStepper';
 import BatchRecordThumbnail from './BatchRecordThumbnail';
+import BatchAnalyticsChart from './BatchAnalyticsChart';
+import BatchSelector from './BatchSelector';
+import BatchRecordLoader from './BatchRecordLoader';
+
 import { RFQFields } from '@/types/rfq';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
@@ -43,6 +51,8 @@ type RightSidebarProps = {
   fetchRFQ: () => void;
   quoteSheetData: Record<string, any> | null;
   downloadQuotePDF: () => void;
+  selectedBatches: string[];
+  setSelectedBatches: (val: string[]) => void;
 };
 
 export default function RightSidebar({
@@ -67,6 +77,8 @@ export default function RightSidebar({
   fetchRFQ,
   quoteSheetData,
   downloadQuotePDF,
+  selectedBatches,
+  setSelectedBatches,
 }: RightSidebarProps) {
   const isCPQ = selectedNode === 'CPQ';
   const isBatch = selectedNode === 'Batch Records';
@@ -91,40 +103,29 @@ export default function RightSidebar({
       </div>
 
       {/* Analytics */}
-      <div className='px-4 py-4 border-b border-gray-200 h-[32%]'>
-        {(isCPQ && quoteCompleted) || (isBatch && brCompleted) ? (
+      <div
+        className={`px-4 py-4 border-b border-gray-200 h-[${
+          isCPQ ? '32%' : '20%'
+        }]`}
+      >
+        {isCPQ && quoteCompleted ? (
           <QuoteAnalyticsChart />
+        ) : isBatch && brCompleted ? (
+          <BatchAnalyticsChart />
+        ) : isBatch && !brStarted ? (
+          <BatchSelector
+            selectedBatches={selectedBatches}
+            setSelectedBatches={setSelectedBatches}
+          />
+        ) : isBatch && brStarted && selectedBatches.length > 0 ? (
+          <BatchRecordLoader />
         ) : !rfqSelected ? (
-          <div className='flex flex-col gap-2 text-sm text-gray-700'>
-            <label htmlFor='rfq-select' className='font-semibold'>
-              Select RFQ
-            </label>
-            <select
-              id='rfq-select'
-              className='bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-600'
-              value={rfqChoice}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === 'TECO-061225') {
-                  setRfqChoice(val);
-                  setRfqSelected(true);
-
-                  setTimeout(() => {
-                    fetchRFQ();
-                  }, 1000);
-                }
-              }}
-            >
-              <option value=''>-- Choose RFQ --</option>
-              <option value='TECO-061225'>TECO-061225</option>
-              <option value='STX-042224' disabled>
-                STX-042224
-              </option>
-              <option value='FLEX-050124' disabled>
-                FLEX-050124
-              </option>
-            </select>
-          </div>
+          <QuoteRFQSelector
+            rfqChoice={rfqChoice}
+            setRfqChoice={setRfqChoice}
+            setRfqSelected={setRfqSelected}
+            fetchRFQ={fetchRFQ}
+          />
         ) : !rfqFields ? (
           <div className='flex h-full items-center justify-center'>
             <div className='flex items-center gap-2 text-sm text-gray-700'>
@@ -133,45 +134,7 @@ export default function RightSidebar({
             </div>
           </div>
         ) : (
-          <div className='space-y-2 text-sm text-gray-700 leading-snug'>
-            <div className='font-semibold'>
-              RFQ Number:{' '}
-              <span className='text-gray-600'>{rfqFields.rfqNumber}</span>
-            </div>
-            <div>
-              <span className='font-semibold'>Company:</span>{' '}
-              {rfqFields.company}
-            </div>
-            <div>
-              <span className='font-semibold'>Release Date:</span>{' '}
-              {rfqFields.rfqReleaseDate}
-            </div>
-            <div>
-              <span className='font-semibold'>Due Date:</span>{' '}
-              {rfqFields.rfqDueDate}
-            </div>
-            <div>
-              <span className='font-semibold'>Issued By:</span>{' '}
-              {rfqFields.issuedBy}
-            </div>
-            <div>
-              <span className='font-semibold'>Email:</span> {rfqFields.email}
-            </div>
-            <div>
-              <span className='font-semibold'>Phone:</span> {rfqFields.phone}
-            </div>
-            <div>
-              <span className='font-semibold'>Product:</span>{' '}
-              {rfqFields.product}
-            </div>
-            <div>
-              <span className='font-semibold'>Spec:</span>{' '}
-              {rfqFields.specification}
-            </div>
-            <div>
-              <span className='font-semibold'>Qty:</span> {rfqFields.orderQty}
-            </div>
-          </div>
+          <QuoteRFQ rfqFields={rfqFields} />
         )}
       </div>
 
@@ -214,21 +177,24 @@ export default function RightSidebar({
             {!brStarted ? (
               <button
                 onClick={() => setBrStarted(true)}
-                className='w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition'
+                disabled={selectedBatches.length === 0}
+                className='w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed'
               >
                 Run Batch Record Check
               </button>
             ) : (
               <>
-                <BatchRecordStepper onComplete={() => setBrCompleted(true)} />
-                {brCompleted && (
+                {brCompleted ? (
                   <BatchRecordThumbnail
                     customer={customer}
                     project={project}
                     product={product}
                     batchConfirmed={brConfirmed}
                     setBatchConfirmed={setBrConfirmed}
+                    selectedBatches={selectedBatches}
                   />
+                ) : (
+                  <BatchRecordStepper onComplete={() => setBrCompleted(true)} />
                 )}
               </>
             )}
