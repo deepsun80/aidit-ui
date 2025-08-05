@@ -8,11 +8,22 @@ import {
   MagnifyingGlassIcon,
   PlusIcon,
   DownloadIcon,
+  ReloadIcon,
 } from '@radix-ui/react-icons';
 
 const WorkflowCanvas = dynamic(
   () => import('@/components/ERP/WorkflowCanvas'),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-[80vh] flex items-center justify-center text-sm text-gray-700'>
+        <div className='flex items-center gap-2'>
+          <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
+          Loading UI...
+        </div>
+      </div>
+    ),
+  }
 );
 
 import RightSidebar from '@/components/ERP/RightSidebar';
@@ -47,7 +58,9 @@ export default function ERP() {
 
   const [rfqFields, setRfqFields] = useState<RFQFields | null>(null);
 
-  const [selectedBatches, setSelectedBatches] = useState<string[]>([]);
+  const [selectedBatches, setSelectedBatches] = useState<
+    { id: string; nonConformance: string | null }[]
+  >([]);
 
   const cpqProgress = quoteConfirmed
     ? 100

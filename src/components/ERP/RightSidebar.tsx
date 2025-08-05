@@ -20,9 +20,11 @@ import QuoteRFQ from './QuoteRFQ';
 
 import BatchRecordStepper from './BatchRecordStepper';
 import BatchRecordThumbnail from './BatchRecordThumbnail';
-import BatchAnalyticsChart from './BatchAnalyticsChart';
+import BatchAnalyticsMultiChart from './BatchAnalyticsMultiChart';
 import BatchSelector from './BatchSelector';
 import BatchRecordLoader from './BatchRecordLoader';
+import BatchYearSelector from './BatchYearSelector';
+import BatchAnalyticsSingleChart from './BatchAnalyticsSingleChart';
 
 import { RFQFields } from '@/types/rfq';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -51,8 +53,10 @@ type RightSidebarProps = {
   fetchRFQ: () => void;
   quoteSheetData: Record<string, any> | null;
   downloadQuotePDF: () => void;
-  selectedBatches: string[];
-  setSelectedBatches: (val: string[]) => void;
+  selectedBatches: { id: string; nonConformance: string | null }[];
+  setSelectedBatches: (
+    val: { id: string; nonConformance: string | null }[]
+  ) => void;
 };
 
 export default function RightSidebar({
@@ -86,6 +90,9 @@ export default function RightSidebar({
   const [rfqSelected, setRfqSelected] = useState(false);
   const [rfqChoice, setRfqChoice] = useState('');
 
+  const [bomSelected, setBomSelected] = useState(false);
+  const [bomLoading, setBomLoading] = useState(false);
+
   return (
     <div className='absolute right-0 top-0 h-full w-1/4 bg-white border-l border-gray-300 shadow-lg z-50 flex flex-col'>
       {/* Header */}
@@ -103,20 +110,67 @@ export default function RightSidebar({
       </div>
 
       {/* Analytics */}
-      <div
-        className={`px-4 py-4 border-b border-gray-200 h-[${
-          isCPQ ? '32%' : '20%'
-        }]`}
-      >
+      <div className={`px-4 py-4 border-b border-gray-200 h-[32%]`}>
         {isCPQ && quoteCompleted ? (
           <QuoteAnalyticsChart />
         ) : isBatch && brCompleted ? (
-          <BatchAnalyticsChart />
-        ) : isBatch && !brStarted ? (
-          <BatchSelector
-            selectedBatches={selectedBatches}
-            setSelectedBatches={setSelectedBatches}
+          selectedBatches.length === 1 ? (
+            <BatchAnalyticsSingleChart
+              product={product}
+              batchNumber={selectedBatches[0].id}
+            />
+          ) : (
+            <BatchAnalyticsMultiChart
+              selectedBatches={selectedBatches.map((b) => ({
+                ...b,
+                nonConformance: b.nonConformance ?? 'no',
+              }))}
+            />
+          )
+        ) : isBatch && !brStarted && !bomSelected ? (
+          <BatchYearSelector
+            onSelectionComplete={() => {
+              setBomLoading(true);
+              setBomSelected(true);
+              setTimeout(() => {
+                setBomLoading(false);
+              }, 1500);
+            }}
           />
+        ) : isBatch && !brStarted && bomLoading ? (
+          <>
+            <BatchYearSelector
+              onSelectionComplete={() => {
+                setBomLoading(true);
+                setBomSelected(true);
+                setTimeout(() => {
+                  setBomLoading(false);
+                }, 1500);
+              }}
+            />
+            <div className='flex h-full items-center justify-center'>
+              <div className='flex items-center gap-2 text-sm text-gray-700'>
+                <ReloadIcon className='animate-spin text-blue-500 w-5 h-5' />
+                BR Agent fetching Batch Records...
+              </div>
+            </div>
+          </>
+        ) : isBatch && !brStarted && bomSelected ? (
+          <>
+            <BatchYearSelector
+              onSelectionComplete={() => {
+                setBomLoading(true);
+                setBomSelected(true);
+                setTimeout(() => {
+                  setBomLoading(false);
+                }, 1500);
+              }}
+            />
+            <BatchSelector
+              selectedBatches={selectedBatches}
+              setSelectedBatches={setSelectedBatches}
+            />
+          </>
         ) : isBatch && brStarted && selectedBatches.length > 0 ? (
           <BatchRecordLoader />
         ) : !rfqSelected ? (
@@ -194,7 +248,10 @@ export default function RightSidebar({
                     selectedBatches={selectedBatches}
                   />
                 ) : (
-                  <BatchRecordStepper onComplete={() => setBrCompleted(true)} />
+                  <BatchRecordStepper
+                    selectedBatches={selectedBatches}
+                    onComplete={() => setBrCompleted(true)}
+                  />
                 )}
               </>
             )}

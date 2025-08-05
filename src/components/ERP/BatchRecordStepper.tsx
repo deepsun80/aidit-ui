@@ -13,7 +13,13 @@ import { ReloadIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 
 interface BatchRecordStepperProps {
   onComplete: () => void;
+  selectedBatches: Batch[];
 }
+
+type Batch = {
+  id: string;
+  nonConformance: string | null;
+};
 
 type Step = {
   title: string;
@@ -22,17 +28,21 @@ type Step = {
 
 export default function BatchRecordStepper({
   onComplete,
+  selectedBatches,
 }: BatchRecordStepperProps) {
   const [steps, setSteps] = useState<Step[]>([
     { title: 'BR Agent getting customer requirements', complete: false },
-    { title: 'BR Agent generating batch record report (1)', complete: false },
+    {
+      title: `BR Agent generating batch record report${
+        selectedBatches.length > 1 ? 's' : ''
+      }`,
+      complete: false,
+    },
   ]);
   const [stepIndex, setStepIndex] = useState(0);
-  const [batchStepCount, setBatchStepCount] = useState(1);
 
   useEffect(() => {
     if (stepIndex === 0) {
-      // complete step 0 after 1s
       const timer = setTimeout(() => {
         setSteps((prev) =>
           prev.map((step, i) => (i === 0 ? { ...step, complete: true } : step))
@@ -40,31 +50,24 @@ export default function BatchRecordStepper({
         setStepIndex(1);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (stepIndex === 1 && batchStepCount <= 3) {
-      // update title for step 1 over 3 seconds
+    } else if (stepIndex === 1) {
       const timer = setTimeout(() => {
         setSteps((prev) =>
           prev.map((step, i) =>
             i === 1
               ? {
                   ...step,
-                  title: `BR Agent generating batch record report (${batchStepCount})`,
+                  complete: true,
                 }
               : step
           )
         );
-        setBatchStepCount((prev) => prev + 1);
-      }, 1000);
+        setStepIndex(2);
+        onComplete();
+      }, 1500);
       return () => clearTimeout(timer);
-    } else if (stepIndex === 1 && batchStepCount > 3) {
-      // complete step 1 after (1 → 2 → 3)
-      setSteps((prev) =>
-        prev.map((step, i) => (i === 1 ? { ...step, complete: true } : step))
-      );
-      setStepIndex(2);
-      onComplete();
     }
-  }, [stepIndex, batchStepCount, onComplete]);
+  }, [stepIndex, selectedBatches.length, onComplete]);
 
   return (
     <div className='flex flex-col gap-6 mt-4'>

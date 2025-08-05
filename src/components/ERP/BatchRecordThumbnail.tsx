@@ -15,13 +15,18 @@ import {
   ChevronRightIcon,
 } from '@radix-ui/react-icons';
 
+type Batch = {
+  id: string;
+  nonConformance: string | null;
+};
+
 interface BatchRecordThumbnailProps {
   customer: string;
   project: string;
   product: string;
   batchConfirmed: boolean;
   setBatchConfirmed: (val: boolean) => void;
-  selectedBatches: string[];
+  selectedBatches: Batch[];
 }
 
 export default function BatchRecordThumbnail({
@@ -97,7 +102,7 @@ export default function BatchRecordThumbnail({
         {/* Header */}
         <div className='text-xs text-gray-800 leading-snug'>
           <div className='text-sm font-bold mb-3'>
-            {selectedBatches[0]} Report
+            {selectedBatches[0].id} Report
           </div>
 
           <div className='flex justify-between gap-4'>
