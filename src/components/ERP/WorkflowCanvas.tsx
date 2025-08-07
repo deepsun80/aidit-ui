@@ -19,7 +19,7 @@ import {
   ConnectionLineType,
 } from '@xyflow/react';
 
-import SplitNode from './SplitNode';
+import SplitNode from '@/components/common/SplitNode';
 import { initialNodes, getDynamicEdges } from './workflowConfig';
 
 // 🧠 Track child relationships for progress

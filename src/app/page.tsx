@@ -7,6 +7,7 @@ import Sidebar from '@/components/common/SideBar';
 import SupplierAudit from '@/pages/SupplierAudit';
 import InternalAudit from '@/pages/InternalAudit';
 import CustomerAudit from '@/pages/CustomerAudit';
+import QMS from '@/pages/QMS';
 // import RecordManagement from '@/pages/RecordManagement';
 import ERP from '@/pages/ERP';
 import { useSession, signIn } from 'next-auth/react';
@@ -17,8 +18,8 @@ import type { QAReport } from '@/types/qa';
 export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
-    'audit' | 'supplier' | 'internal' | 'erp'
-  >('erp');
+    'audit' | 'supplier' | 'internal' | 'erp' | 'qms'
+  >('qms');
 
   // === Report state ===
   const [report, setReport] = useState<QAReport | null>(null);
@@ -111,6 +112,7 @@ export default function Home() {
           )}
           {activePage === 'supplier' && <SupplierAudit />}
           {activePage === 'internal' && <InternalAudit />}
+          {activePage === 'qms' && <QMS setActivePage={setActivePage} />}
           {/* {activePage === 'records' && <RecordManagement />} */}
           {activePage === 'erp' && <ERP />}
         </main>

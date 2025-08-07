@@ -168,9 +168,6 @@ export default function ERP() {
     }
   };
 
-  console.log('quoteSheetData:', quoteSheetData);
-  console.log('rfqFields:', rfqFields);
-
   return (
     <div className='h-full w-full bg-gray-200 p-4 text-gray-800'>
       <div className='flex justify-between items-end mb-4 gap-4'>
