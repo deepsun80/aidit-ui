@@ -173,7 +173,8 @@ export const initialNodes: Node[] = [
       label: 'Internal Audit',
       hasLeftHandle: true,
       disabled: false,
-      progress: 0,
+      progress: 20,
+      clickable: true,
     },
   },
 
@@ -382,7 +383,8 @@ export const initialNodes: Node[] = [
       label: 'Supplier Audit',
       hasTopHandle: true,
       disabled: false,
-      progress: 0,
+      progress: 70,
+      clickable: true,
     },
   },
 
@@ -504,7 +506,8 @@ export const initialNodes: Node[] = [
       label: 'Customer Audit',
       hasTopHandle: true,
       disabled: false,
-      progress: 0,
+      progress: 50,
+      clickable: true,
     },
   },
 
@@ -755,7 +758,7 @@ export const getDynamicEdges = (completion: Record<string, number>): Edge[] => {
     { source: 'capa-action', target: 'field-actions' },
   ];
 
-  return edges.map((edge, index) => {
+  return edges.map((edge) => {
     const sourceNode = nodeMap[edge.source!];
     const targetNode = nodeMap[edge.target!];
 

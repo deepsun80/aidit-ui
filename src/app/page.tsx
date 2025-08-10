@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/common/Header';
+// import Header from '@/components/common/Header';
 import Sidebar from '@/components/common/SideBar';
 // import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
@@ -18,7 +18,7 @@ import type { QAReport } from '@/types/qa';
 export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
-    'audit' | 'supplier' | 'internal' | 'erp' | 'qms'
+    'customer-audit' | 'supplier-audit' | 'internal-audit' | 'erp' | 'qms'
   >('qms');
 
   // === Report state ===
@@ -98,10 +98,10 @@ export default function Home() {
     <div className='min-h-screen bg-gray-200 flex flex-row'>
       <Sidebar setActivePage={setActivePage} activePage={activePage} />
       <div className='flex flex-col flex-1'>
-        <Header />
+        {/* <Header /> */}
         <main className='flex-1 p-8'>
           {/* {activePage === 'dashboard' && <Dashboard />} */}
-          {activePage === 'audit' && (
+          {activePage === 'customer-audit' && (
             <CustomerAudit
               report={report}
               setReport={setReport}
@@ -110,8 +110,8 @@ export default function Home() {
               showError={showError}
             />
           )}
-          {activePage === 'supplier' && <SupplierAudit />}
-          {activePage === 'internal' && <InternalAudit />}
+          {activePage === 'supplier-audit' && <SupplierAudit />}
+          {activePage === 'internal-audit' && <InternalAudit />}
           {activePage === 'qms' && <QMS setActivePage={setActivePage} />}
           {/* {activePage === 'records' && <RecordManagement />} */}
           {activePage === 'erp' && <ERP />}

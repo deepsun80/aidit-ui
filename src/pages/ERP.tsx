@@ -169,7 +169,7 @@ export default function ERP() {
   };
 
   return (
-    <div className='h-full w-full bg-gray-200 p-4 text-gray-800'>
+    <div className='h-full w-full bg-gray-200 px-4 text-gray-800'>
       <div className='flex justify-between items-end mb-4 gap-4'>
         <div className='flex gap-4 items-end'>
           <div className='flex flex-col text-sm text-gray-600'>
@@ -252,7 +252,7 @@ export default function ERP() {
         </div>
       </div>
 
-      <div className='w-full h-[80vh] border border-gray-300 rounded-b shadow-md bg-white'>
+      <div className='w-full h-[80vh] border border-gray-300 rounded-sm shadow-md bg-white'>
         <WorkflowCanvas
           setSelectedNode={setSelectedNode}
           progressByNodeId={{

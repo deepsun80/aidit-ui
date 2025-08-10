@@ -17,14 +17,28 @@ import {
 import { styledNodes, getDynamicEdges } from './workflowConfig';
 import SplitNode from '@/components/common/SplitNode';
 
+const allowedPages = [
+  'customer-audit',
+  'supplier-audit',
+  'internal-audit',
+  'erp',
+  'qms',
+] as const;
+
+type PageType = (typeof allowedPages)[number];
+
 type QMSWorkflowCanvasProps = {
-  onNodeClick?: (nodeId: string) => void;
+  onNodeClick: React.Dispatch<
+    React.SetStateAction<
+      'customer-audit' | 'supplier-audit' | 'internal-audit' | 'erp' | 'qms'
+    >
+  >;
 };
 
 export default function QMSWorkflowCanvas({
   onNodeClick,
 }: QMSWorkflowCanvasProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(styledNodes);
+  const [nodes, , onNodesChange] = useNodesState(styledNodes);
 
   // ✅ Explicitly type edges to resolve TS error
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -47,7 +61,9 @@ export default function QMSWorkflowCanvas({
 
   const handleNodeClick = useCallback(
     (_: any, node: Node) => {
-      if (onNodeClick) onNodeClick(node.id);
+      if (allowedPages.includes(node.id as PageType)) {
+        onNodeClick(node.id as PageType);
+      }
     },
     [onNodeClick]
   );
@@ -60,7 +76,7 @@ export default function QMSWorkflowCanvas({
   );
 
   return (
-    <div className='w-full h-[80vh] text-gray-800 bg-gray-50 rounded-lg border border-gray-300 overflow-hidden'>
+    <div className='w-full h-[80vh] text-gray-800 bg-gray-50 rounded-sm border border-gray-300 overflow-hidden shadow-md'>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -68,7 +84,9 @@ export default function QMSWorkflowCanvas({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={handleNodeClick}
-        fitView
+        // fitView
+        // fitViewOptions={{ padding: 0, maxZoom: 1 }}
+        defaultViewport={{ x: 200, y: 10, zoom: 1 }}
         panOnDrag
         zoomOnScroll
         nodesDraggable={false}
