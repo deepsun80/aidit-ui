@@ -2,11 +2,7 @@
 
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 import type { Dispatch, SetStateAction } from 'react';
-
-interface Batch {
-  id: string;
-  nonConformance: string | null;
-}
+import { Batch } from '@/types/batch';
 
 interface BatchSelectorProps {
   selectedBatches: Batch[];

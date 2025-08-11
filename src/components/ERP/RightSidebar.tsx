@@ -29,6 +29,9 @@ import BatchAnalyticsSingleChart from './BatchAnalyticsSingleChart';
 import { RFQFields } from '@/types/rfq';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
+import { Batch } from '@/types/batch';
+import type { Dispatch, SetStateAction } from 'react';
+
 type RightSidebarProps = {
   selectedNode: string;
   customer: string;
@@ -53,10 +56,8 @@ type RightSidebarProps = {
   fetchRFQ: () => void;
   quoteSheetData: Record<string, any> | null;
   downloadQuotePDF: () => void;
-  selectedBatches: { id: string; nonConformance: string | null }[];
-  setSelectedBatches: (
-    val: { id: string; nonConformance: string | null }[]
-  ) => void;
+  selectedBatches: Batch[];
+  setSelectedBatches: Dispatch<SetStateAction<Batch[]>>;
 };
 
 export default function RightSidebar({

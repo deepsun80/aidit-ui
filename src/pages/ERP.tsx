@@ -10,6 +10,7 @@ import {
   DownloadIcon,
   ReloadIcon,
 } from '@radix-ui/react-icons';
+import { Batch } from '@/types/batch';
 
 const WorkflowCanvas = dynamic(
   () => import('@/components/ERP/WorkflowCanvas'),
@@ -58,9 +59,7 @@ export default function ERP() {
 
   const [rfqFields, setRfqFields] = useState<RFQFields | null>(null);
 
-  const [selectedBatches, setSelectedBatches] = useState<
-    { id: string; nonConformance: string | null }[]
-  >([]);
+  const [selectedBatches, setSelectedBatches] = useState<Batch[]>([]);
 
   const cpqProgress = quoteConfirmed
     ? 100
