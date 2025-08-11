@@ -13,7 +13,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: 'Ai.DIT',
-  description: 'A.I Audit Assistant and Agent',
+  description: 'AI-Powered QMS & Business Process Automation for Manufacturers',
 };
 
 export default async function RootLayout({
