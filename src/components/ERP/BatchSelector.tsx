@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import type { Dispatch, SetStateAction } from 'react';
 
 interface Batch {
   id: string;
@@ -9,7 +10,7 @@ interface Batch {
 
 interface BatchSelectorProps {
   selectedBatches: Batch[];
-  setSelectedBatches: (val: Batch[]) => void;
+  setSelectedBatches: Dispatch<SetStateAction<Batch[]>>;
 }
 
 const mockBatches: Batch[] = [
@@ -48,7 +49,7 @@ export default function BatchSelector({
                 onChange={(e) => {
                   const checked = e.target.checked;
 
-                  setSelectedBatches((prev) =>
+                  setSelectedBatches((prev: Batch[]) =>
                     checked
                       ? [...prev, batch]
                       : prev.filter((b) => b.id !== batch.id)
